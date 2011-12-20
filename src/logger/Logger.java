@@ -8,7 +8,7 @@ public class Logger {
 	static final String logPath = "D:/log.txt";
 	static PrintStream logStream = null;
 	
-	public static final int VERT_DETAIL = 0;
+	public static final int VERY_DETAIL = 0;
 	public static final int DETAIL = 1;
 	public static final int DEBUG = 2;
 	public static final int INFO = 3;
@@ -16,6 +16,7 @@ public class Logger {
 	public static final int ERROR = 5;
 	public static final int NONE = 6;
 	
+	public static final String[] levelName = {"VERY_DETAIL", "DETAIL", "DEBUG", "INFO", "WARNING", "ERROR", "NONE"};
 	public static int currentLevel = 0;
 	
 	public static void log(String s, int level)
@@ -32,9 +33,10 @@ public class Logger {
 	{
 		if(level < currentLevel)
 			return;
+		out.print(levelName[level] + "\t");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");	//设置日期格式
 		out.print(df.format(new Date()));									//获取当前系统时间
-		out.println(s);
+		out.println("\t" + s);
 	}
 	static void clear()
 	{
