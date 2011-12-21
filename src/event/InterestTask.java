@@ -4,11 +4,18 @@ import simulator.packet.InterestPacket;
 import topology.Router;
 
 public class InterestTask extends Task {
-	InterestPacket p;
-	Router target;
-	Router from;
+	public InterestPacket iPacket;
+	public Router target;
+	public Router from;
+	public InterestTask(String uri, Router target,  Router from, double time, TimeLine timeline)
+	{
+		super(time, timeline);
+		this.iPacket = new InterestPacket(uri);
+		this.target = target;
+		this.from = from;
+	}
 	public void execute()
 	{
-		target.handle(p, from);
+		target.handle(this, from);
 	}
 }

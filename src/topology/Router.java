@@ -3,6 +3,10 @@ package topology;
 
 import java.util.*;
 
+import event.ContentTask;
+import event.InterestTask;
+import event.TimeLine;
+
 import simulator.FIB;
 import simulator.PIT;
 import simulator.cache.Cache;
@@ -19,30 +23,30 @@ public class Router {
 	FIB fib;
 	Cache cache;
 	
-	public Router(){}
-	public Router(int cacheSize)
-	{
+	public Router(int routerID, int cacheSize){
+		this.routerID = routerID;
 		cache = new Cache(cacheSize);
 	}
 	public void announce(String prefix, Router from)
 	{
 		fib.announce(prefix, from);
 	}
-	public void handle(InterestPacket iPacket, Router from)	
+	public void handle(InterestTask iTask, Router from)	
 	{
-		iPacket.timeLived++;
-		pit.addPI(iPacket, from);
-		fib.handle(iPacket);
+		iTask.iPacket.timeLived++;
+		pit.addPI(iTask.iPacket, from);
+		fib.handle(iTask.iPacket);
+		//to do
 		
 	}
-	public void handle(AnnoucePacket aPacket, Router from)	
+	public void handle(AnnoucePacket aPacket, Router from, double time)	
 	{
 		aPacket.timeLived++;
 		
 		
 	}
-	public void handle(ContentPacket dPacket)		//大于1k者，先发送uri.01 uri.02 ...最后发送uri以清除PIT
+	public void handle(ContentTask cTask)		//大于1k者，先发送uri.01 uri.02 ...最后发送uri以清除PIT
 	{
-		dPacket.timeLived++;
+		cTask.cPacket.timeLived++;
 	}
 }

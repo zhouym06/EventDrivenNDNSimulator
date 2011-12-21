@@ -2,8 +2,10 @@ package event;
 
 import java.util.LinkedList;
 
+import logger.Logger;
+
 public class TimeLine {
-	LinkedList<Task> tasks = null; 
+	LinkedList<Task> tasks = null;
 	public void add(Task newTask)
 	{
 		if(tasks == null)
@@ -19,6 +21,20 @@ public class TimeLine {
 			else
 				prev++;
 		}	
+	}
+	public void execute()
+	{
+		Logger.log("TimeLine:" + "execute()", Logger.DEBUG);
+		int count = 0;
+		while(tasks.size() > 0)
+		{
+			Logger.log("\texecute():task" + count, Logger.VERY_DETAIL);
+			Task t = tasks.removeFirst();
+			t.execute(this);
+			count++;
+			if(count % 50 == 0)
+				Logger.log(count + "tasks have been executed", Logger.DEBUG);
+		}
 	}
 	public void display()
 	{

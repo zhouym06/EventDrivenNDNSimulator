@@ -4,8 +4,10 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import config.Config;
+
 public class Logger {
-	static final String logPath = "D:/log.txt";
+	static final String logPath = Config.logPath;
 	static PrintStream logStream = null;
 	
 	public static final int VERY_DETAIL = 0;
@@ -38,7 +40,7 @@ public class Logger {
 		out.print(df.format(new Date()));									//获取当前系统时间
 		out.println("\t" + s);
 	}
-	static void clear()
+	public static void clear()
 	{
 		try {
 			if (logStream != null)
