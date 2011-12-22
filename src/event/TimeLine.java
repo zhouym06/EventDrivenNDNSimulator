@@ -9,22 +9,27 @@ public class TimeLine {
 	public void add(Task newTask)
 	{
 		if(tasks == null)
+		{
 			tasks = new LinkedList<Task>();
+			tasks.add(newTask);
+			return;
+		}
 		int prev = 0;
 		for(Task t:tasks)
 		{
 			if(t.time > newTask.time)
 			{
 				tasks.add(prev, newTask);
-				break;
+				return;
 			}
 			else
 				prev++;
-		}	
+		}
+		tasks.addLast(newTask);
 	}
 	public void execute()
 	{
-		Logger.log("TimeLine:" + "execute()", Logger.DEBUG);
+		Logger.log("TimeLine:" + "execute()" + tasks.size(), Logger.DEBUG);
 		int count = 0;
 		while(tasks.size() > 0)
 		{

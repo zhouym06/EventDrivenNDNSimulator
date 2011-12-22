@@ -18,7 +18,7 @@ public class Logger {
 	public static final int ERROR = 5;
 	public static final int NONE = 6;
 	
-	public static final String[] levelName = {"VERY_DETAIL", "DETAIL", "DEBUG", "INFO", "WARNING", "ERROR", "NONE"};
+	public static final String[] levelName = {"VDETAIL", "DETAIL", "DEBUG", "INFO", "WARNING", "ERROR", "NONE"};
 	public static int currentLevel = 0;
 	
 	public static void log(String s, int level)
@@ -35,10 +35,12 @@ public class Logger {
 	{
 		if(level < currentLevel)
 			return;
-		out.print(levelName[level] + "\t");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");	//设置日期格式
 		out.print(df.format(new Date()));									//获取当前系统时间
-		out.println("\t" + s);
+		out.print("\t" + levelName[level] + "\t");
+		for(int i = VERY_DETAIL; level + i < DEBUG; i++)
+			out.print("\t");
+		out.println(s);
 	}
 	public static void clear()
 	{

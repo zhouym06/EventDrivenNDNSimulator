@@ -13,17 +13,15 @@ public class Server extends Router{
 	//ContentName as prefix-contentNo-segmentNum
 	int contentNum;
 	int maxSize;
-	Router linkedTo;
 	double[] cdf;						//Cumulative distribution function by power law
 	int[] contentSize;					//sorted by popularity
 							
-	public Server(String prefix, int contentNum, int maxSize, Router linkedTo) {
-		super(0, 0);
+	public Server(String prefix, int contentNum, int maxSize) {
+		super(-1, 0);
 		
 		this.prefix = prefix;
 		this.contentNum = contentNum;
 		this.maxSize = maxSize;
-		this.linkedTo = linkedTo;
 		genPossibility();
 		genContentSize();
 	}
@@ -98,6 +96,14 @@ public class Server extends Router{
 		}
 		int mid = (int) Math.round(begin + ((double) (end - begin)) * 0.3);
 		return p < cdf[mid] ? getContentNo(p, begin, mid) : getContentNo(p, mid, end);
+	}
+
+	public void announce(double time) {
+		AnnoucePacket ap = new AnnoucePacket(prefix);
+		for(Edge e:interfaces)
+		{
+			e.theOther(this).handle(ap, e, e.delay);
+		}
 	}
 
 }

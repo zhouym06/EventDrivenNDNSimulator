@@ -9,7 +9,10 @@ public class Simulator {
 		Logger.clear();
 		//Topology topo = new Topology("path");
 		Topology topo = Topology.getDefaultTopology1();
-		//TimeLine timeline = topo.genRequests(100000);
+		int requestNum = 100000;
+		double totalRequestTime = 1000; 
+		//TimeLine timeline = topo.genOnOffRequests(requestNum, totalRequestTime);
+		//TimeLine timeline = topo.genPoissonRequests(requestNum);
 		TimeLine timeline = topo.genDefaultRequests1();
 		timeline.execute();
 	}
