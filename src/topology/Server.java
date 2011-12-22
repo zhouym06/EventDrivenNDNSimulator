@@ -2,7 +2,6 @@ package topology;
 
 import java.util.Random;
 
-import event.Task;
 import logger.Logger;
 import simulator.packet.AnnoucePacket;
 import simulator.packet.InterestPacket;
@@ -70,9 +69,12 @@ public class Server extends Router{
 		//linkedTo.handle(new ContentPacket());
 	}
 	
-	public void announce()	
-	{
-		
+	public void announce(double time) {
+		AnnoucePacket ap = new AnnoucePacket(prefix);
+		for(Edge e:interfaces)
+		{
+			e.theOther(this).handle(ap, e, e.delay);
+		}
 	}
 	
 	public int getContentNum()
@@ -98,11 +100,12 @@ public class Server extends Router{
 		return p < cdf[mid] ? getContentNo(p, begin, mid) : getContentNo(p, mid, end);
 	}
 
-	public void announce(double time) {
-		AnnoucePacket ap = new AnnoucePacket(prefix);
-		for(Edge e:interfaces)
+	public void  display()
+	{
+		Logger.log("Server" + routerID + ": as " + prefix + " " + " has " + contentNum + "contents and" + interfaces.size() + " edges", Logger.INFO);
+		for(Edge e: interfaces)
 		{
-			e.theOther(this).handle(ap, e, e.delay);
+			e.display();
 		}
 	}
 

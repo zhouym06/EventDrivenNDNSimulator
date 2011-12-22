@@ -14,6 +14,8 @@ public class Simulator {
 		//TimeLine timeline = topo.genOnOffRequests(requestNum, totalRequestTime);
 		//TimeLine timeline = topo.genPoissonRequests(requestNum);
 		TimeLine timeline = topo.genDefaultRequests1();
+		//topo.displayTopology();
+		//topo.displayFIB();
 		timeline.execute();
 	}
 

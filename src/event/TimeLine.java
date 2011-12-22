@@ -35,7 +35,7 @@ public class TimeLine {
 		{
 			Logger.log("\texecute():task" + count, Logger.VERY_DETAIL);
 			Task t = tasks.removeFirst();
-			t.execute(this);
+			t.execute();
 			count++;
 			if(count % 50 == 0)
 				Logger.log(count + "tasks have been executed", Logger.DEBUG);

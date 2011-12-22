@@ -25,12 +25,17 @@ public class FIB {								//Forward Information Base
 		}
 		return nextInterface;
 	}
+	public int getSize()
+	{
+		return entries.size();
+	}
 	/*
 	 * @return if the fib have been changed
 	*/
 	public boolean announce(AnnoucePacket aPacket, int fromInterface, double arriveTime)
 	{
 		String uri = aPacket.contentName;
+		Logger.log("FIB:announce(" + uri + " from interface" + fromInterface + ")\t" + "arriveTime" + arriveTime, Logger.DEBUG);
 		FIBEntry entry = null;
 		for(FIBEntry e:entries)
 		{
@@ -44,14 +49,14 @@ public class FIB {								//Forward Information Base
 		if(entry == null)
 		{
 			entries.add(new FIBEntry(aPacket.contentName, fromInterface, aPacket.timeLived, arriveTime));
-			Logger.log("FIB:announce(" + uri + " " + fromInterface + ")\t" + "new Entry" , Logger.DEBUG);
+			Logger.log("\tFIB:announce new Entry" , Logger.DEBUG);
 			return true;
 		}
 		else
 		{
 			if(entry.getNextInterface() == fromInterface)
 			{
-				Logger.log("FIB:announce(" + uri + " " + fromInterface + ")\t" + "same Entry" , Logger.DEBUG);
+				Logger.log("\tFIB:announce same Entry" , Logger.DEBUG);
 				return false;
 			}
 			//sorted by ttl first, time second now or arrive time rules?
@@ -60,25 +65,28 @@ public class FIB {								//Forward Information Base
 				entry.setNextInterface(fromInterface);
 				entry.setDistance(aPacket.timeLived);
 				entry.setDelay(arriveTime);
-				Logger.log("FIB:announce(" + uri + " " + fromInterface + ")\t" + "better ttl" , Logger.DEBUG);
+				Logger.log("\tFIB:announce better ttl" , Logger.DEBUG);
 				return true;
 			}else if(entry.distance == aPacket.timeLived && entry.delay > arriveTime)
 			{
-				Logger.log("FIB:announce(" + uri + " " + fromInterface + ")\t" + "better delay" , Logger.DEBUG);
 				entry.setNextInterface(fromInterface);
 				entry.setDistance(aPacket.timeLived);
 				entry.setDelay(arriveTime);
+				Logger.log("\tFIB:announce better delay" , Logger.DEBUG);
 				return true;
 			}else
 			{
-				Logger.log("FIB:announce(" + uri + " " + fromInterface + ")\t" + "worse" , Logger.DEBUG);
+				Logger.log("\tFIB:announce worse perfomance" , Logger.DEBUG);
 				return false;
 			}
 		}
 	}
-	
-	public void handle(InterestPacket packet) {
-		//getNextRouter(packet.contentName);
+
+	public void display() {
+		for(FIBEntry e:entries)
+		{
+			Logger.log("\tFIBEntry(" + e.prefix + ") is " + e.nextInterface + " with dis " + e.distance + " and delay " + e.delay, Logger.INFO);
+		}
 		
 	}
 }

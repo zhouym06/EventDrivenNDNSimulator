@@ -20,7 +20,7 @@ public class Edge {
 	}
 	public Router theOther(Router r)
 	{
-		Logger.log("Edge:theOther()of" + r.routerID + " is " + ( r1.equals(r) == true ? r2.routerID : r1.routerID), Logger.DEBUG);
+		Logger.log("Edge:theOtherof(router" + r.routerID + ")" + " in edge" + edgeID + " is router" + ( r1.equals(r) == true ? r2.routerID : r1.routerID), Logger.DETAIL);
 		if (r1.equals(r))
 		{
 			return r2;
@@ -33,5 +33,9 @@ public class Edge {
 	public boolean equals(Object o1)
 	{
 		return ((Edge) o1).edgeID == this.edgeID;
+	}
+	public void display() {
+		Logger.log("Edge" + edgeID + ":" + " between Router" + r1.routerID + " and Router" + r2.routerID + " with delay " + delay, Logger.INFO);
+		
 	}
 }

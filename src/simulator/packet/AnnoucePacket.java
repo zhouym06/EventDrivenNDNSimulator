@@ -6,4 +6,8 @@ public class AnnoucePacket extends Packet {
 	{
 		super(contentName);
 	}
+
+	public AnnoucePacket(AnnoucePacket p) {
+		super(p);
+	}
 }

@@ -8,5 +8,10 @@ public class Packet {
 	{
 		this.contentName = contentName;
 	}
+	public Packet(Packet p)
+	{
+		this.contentName = p.contentName;
+		this.timeLived = p.timeLived;
+	}
 
 }
