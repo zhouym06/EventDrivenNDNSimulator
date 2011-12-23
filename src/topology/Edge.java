@@ -20,7 +20,7 @@ public class Edge {
 	}
 	public Router theOther(Router r)
 	{
-		Logger.log("Edge:theOtherof(router" + r.routerID + ")" + " in edge" + edgeID + " is router" + ( r1.equals(r) == true ? r2.routerID : r1.routerID), Logger.DETAIL);
+		//Logger.log("Edge:theOtherof(router" + r.routerID + ")" + " in edge" + edgeID + " is router" + ( r1.equals(r) == true ? r2.routerID : r1.routerID), Logger.DETAIL);
 		if (r1.equals(r))
 		{
 			return r2;

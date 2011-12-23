@@ -34,8 +34,9 @@ public class Topology {
 
 	}
 
-	public TimeLine genOnOffRequests(int requestNum, double totalRequestTime) {
-		TimeLine tl = new TimeLine();
+	public void genOnOffRequests(int requestNum, double totalRequestTime) {
+		TimeLine.clear();
+		
 		int serverNo, sinkNo, contentNo;
 		Random random = new Random(System.currentTimeMillis());
 
@@ -61,20 +62,20 @@ public class Topology {
 				String uri = servers[serverNo].prefix + "-" + String.valueOf(contentNo);
 				// 10 request is generated each second when on?
 				time += MyRandom.nextPoisson(1) / 10;
-				tl.add(new InterestTask(uri, sinks[sinkNo].linkedTo, sinks[sinkNo],
-						onTime + time, tl));
+				TimeLine.add(new InterestTask(uri, sinks[sinkNo].linkedTo, sinks[sinkNo],
+						onTime + time));
 				requestCount++;
 				//Logger.log("Topology:genOnOffRequests(" + "" + ")" + "to\tSink" + sinkNo + "\treq Content:"
 				//r		+ uri + "\tat " + (onTime + time), Logger.DETAIL);
 			}
 		}
-		return tl;
 	}
 
 	
 
-	public TimeLine genPoissonRequests(int requestNum) {
-		TimeLine tl = new TimeLine();
+	public void genPoissonRequests(int requestNum) {
+		TimeLine.clear();
+		
 		int sNo, rNo, cNo;
 		
 		double time = 0;
@@ -90,12 +91,10 @@ public class Topology {
 			String uri = servers[sNo].prefix + "-" + String.valueOf(cNo);
 			// 10 request is generated each second?
 			time += MyRandom.nextPoisson(1) / 10; 
-			tl.add(new InterestTask(uri, sinks[rNo].linkedTo, sinks[rNo], time,
-					tl));
+			TimeLine.add(new InterestTask(uri, sinks[rNo].linkedTo, sinks[rNo], time));
 			Logger.log("Topology:genPoissonRequests(" + i + ")" + "to\tRouter" + rNo + "\trequest:"
 					+ uri + "\tat " + time, Logger.DEBUG);
 		}
-		return tl;
 	}
 
 	
@@ -121,10 +120,10 @@ public class Topology {
 		}
 		//sinks
 		for (int i = 0; i < topo.sinkNum; i++) {
-			topo.sinks[i] = new Sink(topo.routers[i+1]);
+			topo.sinks[i] = new Sink(topo.routers[i+1], -(i+1));
 		}
 		//servers
-		topo.servers[0] = new Server("Server" + String.valueOf(0), 100, 10);
+		topo.servers[0] = new Server("Server" + String.valueOf(0), -100, 100, 10);
 		// interfaces
 		topo.edgeNum = 6;
 		Random random = new Random(System.currentTimeMillis());
@@ -134,7 +133,7 @@ public class Topology {
 			Edge e = new Edge(topo.routers[0], topo.routers[i], i ,random.nextDouble());
 			topo.routers[0].interfaces.add(e);
 			topo.routers[i].interfaces.add(e);
-			topo.routers[i].interfaceNum = topo.routers[i].interfaces.size();
+			//topo.routers[i].interfaceNum = topo.routers[i].interfaces.size();
 		}
 			//servers
 		{
@@ -154,12 +153,11 @@ public class Topology {
 		return topo;
 	}
 
-	public TimeLine genDefaultRequests1() {
+	public void genDefaultRequests1() {
 		Logger.log("Topology:" + "genDefaultRequests1()", Logger.INFO);
 		int requestNum = 1000;
 		// TimeLine tl = genPoissonRequests(requestNum);
-		TimeLine tl = genOnOffRequests(requestNum, 10);
-		return tl;
+		genOnOffRequests(requestNum, 10);
 	}
 
 	public void announce() {

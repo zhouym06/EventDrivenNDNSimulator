@@ -5,4 +5,8 @@ public class ContentPacket extends Packet{
 	{
 		super(contentName);
 	}
+	public ContentPacket(ContentPacket cPacket)
+	{
+		super(cPacket);
+	}
 }

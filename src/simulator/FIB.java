@@ -25,9 +25,11 @@ public class FIB {								//Forward Information Base
 		}
 		return nextInterface;
 	}
-	public int getSize()
-	{
-		return entries.size();
+	public double getLookupTime()
+	{  				
+		return entries.size() * 0.01;			//* MyRandom.nextPoisson(10) / 10;?
+												// we don't introduce randomness here because it lead to out of order 
+												// that fails our segment control strategy
 	}
 	/*
 	 * @return if the fib have been changed

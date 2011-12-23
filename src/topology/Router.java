@@ -13,13 +13,12 @@ import simulator.FIB;
 import simulator.PIT;
 import simulator.cache.Cache;
 import simulator.packet.*;
-import util.MyRandom;
 
 
 public class Router {
 	public int level;
 	public int routerID;
-	public int interfaceNum;						//first interfaceNum interfaces are between routers
+	//public int interfaceNum;						//first interfaceNum interfaces are between routers
 	public ArrayList<Edge> interfaces = null;
 	
 	PIT pit;
@@ -35,18 +34,26 @@ public class Router {
 	}
 	public void handle(InterestTask iTask, Router from)	
 	{
-		Logger.log("Router:handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + "at router" + this.routerID, Logger.DEBUG);
+		Logger.log("Router" + routerID + ":handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + "at router" + this.routerID, Logger.DEBUG);
 		iTask.iPacket.timeLived++;
-		pit.addPI(iTask.iPacket, from);
-		int i = fib.getNextInterface(iTask.iPacket.contentName);
-		double time = iTask.getTime() + fib.getSize() * 0.01; 				//* MyRandom.nextPoisson(10) / 10;
-		iTask.getTimeLine().add(new InterestTask(iTask.iPacket.contentName, interfaces.get(i).theOther(this),  this, time, iTask.getTimeLine()));
+		//to do
+		// cache
+		if(pit.addPI(iTask.iPacket, from))
+		{
+
+			int i = fib.getNextInterface(iTask.iPacket.contentName);
+			double time = iTask.getTime() + fib.getLookupTime();
+			TimeLine.add(new InterestTask(iTask.iPacket.contentName, interfaces.get(i).theOther(this),  this, time));
+			
+		}
+		
+		
 	}
 	public void handle(AnnoucePacket aPacket, Edge fromInterface, double time)	
 	{
 		aPacket.timeLived++;
 		int index = interfaces.indexOf(fromInterface);
-		Logger.log("Router:handleAnnouce(" + aPacket.contentName + "): at router" + this.routerID + " from edge" + fromInterface.edgeID + "(index in array " + index + ")", Logger.DEBUG);
+		Logger.log("Router" + routerID + ":handleAnnouce(" + aPacket.contentName + "): at router" + this.routerID + " from edge" + fromInterface.edgeID + "(index in array " + index + ")", Logger.DEBUG);
 		if(fib.announce(aPacket, index, time))
 		{
 			for(Edge e:interfaces)
@@ -59,10 +66,21 @@ public class Router {
 		}
 		Logger.log("Router:handleAnnouce fin", Logger.DEBUG);
 	}
-	public void handle(ContentTask cTask)		//大于1k者，先发送uri.01 uri.02 ...最后发送uri以清除PIT
+	//大于1k者，先发送uri.01 uri.02 ...最后发送uri以清除PIT
+	public void handle(ContentTask cTask)
 	{
+		Logger.log("Router" + routerID + ":handleContent " + cTask.cPacket.contentName, Logger.DEBUG);
 		cTask.cPacket.timeLived++;
-		//cache.handle();
+		// to do
+		// cache.handle();		
+		ArrayList<Router> rts = pit.handle(cTask.cPacket);
+		for(Router r:rts)
+		{
+			Logger.log("Router" + routerID + ":handleContent(" + cTask.cPacket.contentName+ ")" + " ttl = " + cTask.cPacket.timeLived + " from this router" + this.routerID + "to router" + r.routerID, Logger.DEBUG);
+			ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime() + pit.getFowardTime());
+			TimeLine.add(ct);
+		}
+		
 	}
 	public void displayFIB() {
 		Logger.log("FIBEntry of " + routerID + ":", Logger.INFO);
@@ -76,5 +94,9 @@ public class Router {
 		{
 			e.display();
 		}
+	}
+	public String toString()
+	{
+		return "Router" + routerID + ":";
 	}
 }

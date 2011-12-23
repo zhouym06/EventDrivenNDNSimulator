@@ -1,12 +1,17 @@
 package topology;
 
+import java.util.ArrayList;
+
+import simulator.packet.ContentPacket;
+import event.ContentTask;
+import event.TimeLine;
 import logger.Logger;
 
 public class Sink extends Router {
 	Router linkedTo;
-	public Sink(Router linkedTo)
+	public Sink(Router linkedTo, int sinkNo)
 	{
-		super(-2, 0);
+		super(sinkNo, 0);
 		this.linkedTo = linkedTo;
 	}
 	
@@ -17,6 +22,10 @@ public class Sink extends Router {
 		{
 			e.display();
 		}
+	}
+	public void handle(ContentTask cTask)
+	{
+		Logger.log("Sink:handleContent" + cTask.cPacket.contentName, Logger.DEBUG);
 	}
 
 }

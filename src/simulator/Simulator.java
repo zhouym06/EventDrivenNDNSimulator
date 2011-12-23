@@ -11,12 +11,12 @@ public class Simulator {
 		Topology topo = Topology.getDefaultTopology1();
 		int requestNum = 100000;
 		double totalRequestTime = 1000; 
-		//TimeLine timeline = topo.genOnOffRequests(requestNum, totalRequestTime);
-		//TimeLine timeline = topo.genPoissonRequests(requestNum);
-		TimeLine timeline = topo.genDefaultRequests1();
+		//topo.genOnOffRequests(requestNum, totalRequestTime);
+		//topo.genPoissonRequests(requestNum);
+		topo.genDefaultRequests1();		//init TimeLine
 		//topo.displayTopology();
 		//topo.displayFIB();
-		timeline.execute();
+		TimeLine.execute();
 	}
 
 }

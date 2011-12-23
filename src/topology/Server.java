@@ -1,10 +1,15 @@
 package topology;
 
-import java.util.Random;
+
+import event.ContentTask;
+import event.InterestTask;
+import event.TimeLine;
 
 import logger.Logger;
 import simulator.packet.AnnoucePacket;
+import simulator.packet.ContentPacket;
 import simulator.packet.InterestPacket;
+import util.MyRandom;
 
 
 public class Server extends Router{
@@ -15,18 +20,45 @@ public class Server extends Router{
 	double[] cdf;						//Cumulative distribution function by power law
 	int[] contentSize;					//sorted by popularity
 							
-	public Server(String prefix, int contentNum, int maxSize) {
-		super(-1, 0);
+	public Server(String prefix, int ServerNo, int contentNum, int maxSize) {
+		super(ServerNo, 0);
 		
 		this.prefix = prefix;
 		this.contentNum = contentNum;
 		this.maxSize = maxSize;
-		genPossibility();
-		genContentSize();
+		initPossibility();
+		initContentSize();
 	}
-	
-	private void genPossibility() {
-		Logger.log("Server:" + "genPossibility()", Logger.DEBUG);
+	//大于1k者，先发送uri-01 uri-02 ...最后发送uri以清除PIT
+	public void handle(InterestTask iTask, Router from)	
+	{
+		Logger.log("Server:handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + " at router" + this.routerID, Logger.DEBUG);
+		String uri = iTask.iPacket.contentName;
+		String[] a = uri.split("-");
+		if(!a[0].equalsIgnoreCase(prefix))
+		{
+			Logger.log("!!!Server:handleInterest(): Unknown Content:" + uri +" in Server" + routerID + "(" + prefix + ")", Logger.ERROR);
+			return;
+		}
+		int contentNo = Integer.valueOf(a[1]);
+		double time = iTask.getTime();
+		for(int segNo = 0; segNo < contentSize[contentNo]; segNo++)
+		{
+			ContentPacket cPacket = new ContentPacket(prefix + "-" + contentNo + "-" + segNo);
+			time += getServeTime();	 	 				//* MyRandom.nextPoisson(10) / 10;
+			TimeLine.add( new ContentTask(cPacket, from, time));
+		}
+		time += getServeTime();
+		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo), from, time);
+		TimeLine.add(t);
+	}
+	public double getServeTime()
+	{
+		return 0.1;
+		//MyRandom.nextPoisson(10) / 100;
+	}
+	private void initPossibility() {
+		Logger.log("Server:" + "initPossibility()", Logger.DEBUG);
 		cdf = new double[contentNum];
 		double sum = 0;
 		for(int i = 0; i < contentNum; i++)	//a Harmonic series 
@@ -42,31 +74,23 @@ public class Server extends Router{
 		}
 		Logger.log("\tgenPossibility(): sum is" + sum, Logger.DEBUG);
 	}
-	private void genContentSize() {
-		//in a decreasing reciprocal manner(1/x)
-		//http://www.php-oa.com/2010/05/27/squid-cache-object-size.html
-		//http://www.cs.yale.edu/homes/jqhan/paper/ftp.pdf
-		Logger.log("Server:" + "genContentSize()", Logger.DEBUG);
+	private void initContentSize() {
+		Logger.log("Server:" + "initContentSize()", Logger.DEBUG);
 		contentSize = new int[contentNum];
-		Random random = new Random(System.currentTimeMillis());
-		double[] size = new double[contentNum];
 		for(int i = 0; i < contentNum; i++)
 		{
-			size[i] = ( random.nextDouble() * (maxSize-1) ) + ( 1 / (double)maxSize );
-			contentSize[i] = (int)(Math.ceil(1 / size[i]));
-			//Logger.log("\tgenContentSize(" + i + "):" + "size" + size[i], Logger.VERY_DETAIL);
-			//Logger.log("\tgenContentSize(" + i + "):" + "contentSize" + contentSize[i], Logger.VERY_DETAIL);
+			//even distributed
+			contentSize[i] = (int) Math.ceil((MyRandom.nextDouble() * maxSize));
+			/*
+			//in a decreasing reciprocal manner(1/x)
+			//http://www.php-oa.com/2010/05/27/squid-cache-object-size.html
+			//http://www.cs.yale.edu/homes/jqhan/paper/ftp.pdf
+			double tmp = ( MyRandom.nextDouble() * (maxSize-1) ) + ( 1 / (double)maxSize );
+			contentSize[i] = (int)(Math.ceil(1 / tmp));
+			*/
+			//Logger.log("\tinitContentSize(" + i + "):" + "size" + size[i], Logger.VERY_DETAIL);
+			Logger.log("\tinitContentSize(" + i + "):" + "contentSize" + contentSize[i], Logger.VERY_DETAIL);
 		}
-	}
-	public void handle(InterestPacket iPacket, Router from, double time)	
-	{
-		if(!iPacket.contentName.contains(prefix))
-		{
-			Logger.log(iPacket.contentName + " Not in Server " + prefix, Logger.ERROR);
-			return;
-		}
-		//add(Task newTask)
-		//linkedTo.handle(new ContentPacket());
 	}
 	
 	public void announce(double time) {

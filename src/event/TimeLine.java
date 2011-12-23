@@ -5,13 +5,33 @@ import java.util.LinkedList;
 import logger.Logger;
 
 public class TimeLine {
-	LinkedList<Task> tasks = null;
-	public void add(Task newTask)
+	private static LinkedList<Task> tasks = null;
+	private TimeLine()
+	{
+		tasks = new LinkedList<Task>();
+	}
+	public static void clear() {
+		if(tasks == null)
+		{
+			tasks = new LinkedList<Task>();
+			return;
+		}
+		tasks.clear();
+	}
+	
+	public static void add(Task newTask)
 	{
 		if(tasks == null)
 		{
 			tasks = new LinkedList<Task>();
 			tasks.add(newTask);
+			Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG);
+			return;
+		}
+		if(tasks.size() == 0)
+		{
+			tasks.add(newTask);
+			Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG);
 			return;
 		}
 		int prev = 0;
@@ -20,14 +40,16 @@ public class TimeLine {
 			if(t.time > newTask.time)
 			{
 				tasks.add(prev, newTask);
+				Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG);
 				return;
 			}
 			else
 				prev++;
 		}
 		tasks.addLast(newTask);
+		Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG);
 	}
-	public void execute()
+	public static void execute()
 	{
 		Logger.log("TimeLine:" + "execute()" + tasks.size(), Logger.DEBUG);
 		int count = 0;
@@ -38,15 +60,16 @@ public class TimeLine {
 			t.execute();
 			count++;
 			if(count % 50 == 0)
-				Logger.log(count + "tasks have been executed", Logger.DEBUG);
+				Logger.log(count + "tasks have been executed£¬ now remain" + tasks.size(), Logger.DEBUG);
 		}
 	}
-	public void display()
+	public static void display()
 	{
 		for(Task t:tasks)
 		{
 			t.display();
 		}
 	}
+	
 
 }

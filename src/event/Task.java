@@ -3,25 +3,24 @@ package event;
 import logger.Logger;
 
 public class Task {
-	TimeLine timeline;
 	double time;
-	public Task(double time, TimeLine timeline)
+	public Task(double time)
 	{
 		this.time = time;
-		this.timeline = timeline;
 	}
 	public void execute()
 	{	
+		Logger.log(toString(), Logger.ERROR);
 	}
 	public void display() {
 		Logger.log(System.out, String.valueOf(time), 3);
 	}
-	public TimeLine getTimeLine()
-	{
-		return timeline;
-	}
 	public double getTime()
 	{
 		return time;
+	}
+	public String toString()
+	{
+		return time + "Unkown Task!";
 	}
 }

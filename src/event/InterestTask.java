@@ -8,17 +8,20 @@ public class InterestTask extends Task {
 	public InterestPacket iPacket;
 	public Router target;
 	public Router from;
-	public InterestTask(String uri, Router target,  Router from, double time, TimeLine timeline)
+	public InterestTask(String uri, Router target,  Router from, double time)
 	{
-		super(time, timeline);
+		super(time);
 		this.iPacket = new InterestPacket(uri);
 		this.target = target;
 		this.from = from;
 	}
 	public void execute()
 	{
-		Logger.log("InterestTask:execute(" + iPacket.contentName + ") from router" + from.routerID + "\tto" + target.routerID, Logger.DEBUG);
+		Logger.log(toString() + " execute()", Logger.DEBUG);
 		target.handle(this, from);
-		
+	}
+	public String toString()
+	{
+		return time + "\tInterestTask(" + iPacket.contentName + ") from router" + from.routerID + "\tto router" + target.routerID;
 	}
 }
