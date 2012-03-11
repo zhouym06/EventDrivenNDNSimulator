@@ -8,7 +8,7 @@ import simulator.packet.AnnoucePacket;
 import simulator.packet.InterestPacket;
 
 public class FIB {								//Forward Information Base
-	ArrayList<FIBEntry> entries = null;			//TO DO: use trie to improve performance 
+	ArrayList<FIBEntry> entries = null;			//TO DO: use trie to improve performance ?
 	public FIB()
 	{
 		entries = new ArrayList<FIBEntry>();

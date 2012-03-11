@@ -1,9 +1,11 @@
 package simulator.packet;
 
 public class ContentPacket extends Packet{
-	public ContentPacket(String contentName)
+	public int size;
+	public ContentPacket(String contentName, int size)
 	{
 		super(contentName);
+		this.size = size;
 	}
 	public ContentPacket(ContentPacket cPacket)
 	{

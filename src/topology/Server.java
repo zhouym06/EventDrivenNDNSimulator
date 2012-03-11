@@ -29,7 +29,7 @@ public class Server extends Router{
 		initPossibility();
 		initContentSize();
 	}
-	//大于1k者，先发送uri-01 uri-02 ...最后发送uri以清除PIT
+	//不分segment了
 	public void handle(InterestTask iTask, Router from)	
 	{
 		Logger.log("Server:handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + " at router" + this.routerID, Logger.DEBUG);
@@ -42,14 +42,16 @@ public class Server extends Router{
 		}
 		int contentNo = Integer.valueOf(a[1]);
 		double time = iTask.getTime();
+		/*//不分segment了
 		for(int segNo = 0; segNo < contentSize[contentNo]; segNo++)
 		{
 			ContentPacket cPacket = new ContentPacket(prefix + "-" + contentNo + "-" + segNo);
 			time += getServeTime();	 	 				//* MyRandom.nextPoisson(10) / 10;
 			TimeLine.add( new ContentTask(cPacket, from, time));
 		}
+		*/
 		time += getServeTime();
-		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo), from, time);
+		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, contentSize[contentNo]), from, time);
 		TimeLine.add(t);
 	}
 	public double getServeTime()
@@ -82,6 +84,7 @@ public class Server extends Router{
 			//even distributed
 			contentSize[i] = (int) Math.ceil((MyRandom.nextDouble() * maxSize));
 			/*
+			 * to do
 			//in a decreasing reciprocal manner(1/x)
 			//http://www.php-oa.com/2010/05/27/squid-cache-object-size.html
 			//http://www.cs.yale.edu/homes/jqhan/paper/ftp.pdf

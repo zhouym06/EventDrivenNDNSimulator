@@ -2,7 +2,7 @@ package event;
 
 import logger.Logger;
 
-public class Task {
+public abstract class Task {
 	double time;
 	public Task(double time)
 	{

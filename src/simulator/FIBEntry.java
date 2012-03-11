@@ -20,12 +20,14 @@ public class FIBEntry {
 			return 0;
 		int l1 = prefix.length();
 		int l2 = uri.length();
+		if(l1 > l2)
+			return 0;
 		while(l < l1 && l <l2)
 		{
 			if(uri.charAt(l) == prefix.charAt(l))
 				l++;
 			else
-				return l;							//first different char
+				return 0;							//have different char
 		}
 		return l;
 	}

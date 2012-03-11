@@ -157,7 +157,7 @@ public class Topology {
 		Logger.log("Topology:" + "genDefaultRequests1()", Logger.INFO);
 		int requestNum = 1000;
 		// TimeLine tl = genPoissonRequests(requestNum);
-		genOnOffRequests(requestNum, 10);
+		genOnOffRequests(requestNum, 1000);
 	}
 
 	public void announce() {

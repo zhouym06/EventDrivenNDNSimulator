@@ -12,6 +12,7 @@ import event.TimeLine;
 import simulator.FIB;
 import simulator.PIT;
 import simulator.cache.Cache;
+import simulator.cache.LRUCache;
 import simulator.packet.*;
 
 
@@ -29,25 +30,26 @@ public class Router {
 		this.routerID = routerID;
 		pit = new PIT();
 		fib = new FIB();
-		this.cache = new Cache(cacheSize);
+		this.cache = new LRUCache(cacheSize);
 		this.interfaces = new ArrayList<Edge>();
 	}
 	public void handle(InterestTask iTask, Router from)	
 	{
-		Logger.log("Router" + routerID + ":handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + "at router" + this.routerID, Logger.DEBUG);
+		Logger.log("Router" + routerID + ":handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + "at router" + this.routerID, Logger.ROUTER);
 		iTask.iPacket.timeLived++;
-		//to do
-		// cache
+		if(cache.contains(iTask.iPacket.contentName))
+		{
+			ContentTask ct = new ContentTask(cache.getContent(iTask.iPacket.contentName), from, iTask.getTime() + pit.getFowardTime());
+			TimeLine.add(ct);
+			return;
+		}
 		if(pit.addPI(iTask.iPacket, from))
 		{
-
 			int i = fib.getNextInterface(iTask.iPacket.contentName);
 			double time = iTask.getTime() + fib.getLookupTime();
+			//double time = iTask.getTime();
 			TimeLine.add(new InterestTask(iTask.iPacket.contentName, interfaces.get(i).theOther(this),  this, time));
-			
 		}
-		
-		
 	}
 	public void handle(AnnoucePacket aPacket, Edge fromInterface, double time)	
 	{
@@ -66,18 +68,20 @@ public class Router {
 		}
 		Logger.log("Router:handleAnnouce fin", Logger.DEBUG);
 	}
-	//大于1k者，先发送uri.01 uri.02 ...最后发送uri以清除PIT
+	//不分segment了
 	public void handle(ContentTask cTask)
 	{
 		Logger.log("Router" + routerID + ":handleContent " + cTask.cPacket.contentName, Logger.DEBUG);
 		cTask.cPacket.timeLived++;
 		// to do
-		// cache.handle();		
+		cache.handle(cTask.cPacket);
+		
 		ArrayList<Router> rts = pit.handle(cTask.cPacket);
 		for(Router r:rts)
 		{
-			Logger.log("Router" + routerID + ":handleContent(" + cTask.cPacket.contentName+ ")" + " ttl = " + cTask.cPacket.timeLived + " from this router" + this.routerID + "to router" + r.routerID, Logger.DEBUG);
+			Logger.log("Router" + routerID + ":handleContent(" + cTask.cPacket.contentName+ ")" + " ttl = " + cTask.cPacket.timeLived + " from this router" + this.routerID + "to router" + r.routerID, Logger.ROUTER);
 			ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime() + pit.getFowardTime());
+			//ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime());
 			TimeLine.add(ct);
 		}
 		

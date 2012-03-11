@@ -25,6 +25,7 @@ public class PIT {
 			ArrayList<Router> interfaces = new ArrayList<Router>();
 			interfaces.add(pendingSrc);
 			pendingInterest.put(uri, interfaces);
+			Logger.log("PIT:addPI "  + uri + " fin." + pendingSrc.routerID, Logger.ROUTER - 1);
 			return true;
 		}
 		else
@@ -34,7 +35,8 @@ public class PIT {
 			{
 				interfaces.add(pendingSrc);
 			}
-			Logger.log("PIT:addPI fin. Interest already sent", Logger.DEBUG);
+			pendingInterest.put(uri, interfaces);
+			Logger.log("PIT:addPI fin. Interest already sent", Logger.ROUTER - 1);
 			return false;
 		}
 		
@@ -68,6 +70,7 @@ public class PIT {
 		if(pendingRouters == null)
 		{
 			Logger.log("!!!PIT:handleContent(): we don't have " + uri + " in PIT", Logger.ERROR);
+			Logger.log(display(), Logger.ERROR);
 			return null;
 		}
 		return pendingRouters;
@@ -77,6 +80,18 @@ public class PIT {
 	public double getFowardTime()
 	{  				
 		return pendingInterest.size() * 0.01;			//* MyRandom.nextPoisson(10) / 10;?
+	}
+	public String display()
+	{
+		String str = "This PIT have:";
+		for(Entry<String, ArrayList<Router>> e:pendingInterest.entrySet())
+		{
+			str += e.getKey();
+			str += " of Router:";
+			for(Router r:e.getValue())
+				str += r.routerID + " ";
+		}
+		return str;
 	}
 	
 }
