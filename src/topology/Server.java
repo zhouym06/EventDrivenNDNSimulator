@@ -32,7 +32,7 @@ public class Server extends Router{
 	//≤ª∑÷segment¡À
 	public void handle(InterestTask iTask, Router from)	
 	{
-		Logger.log("Server:handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + " at router" + this.routerID, Logger.DEBUG);
+		Logger.log("Server:handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + " at router" + this.routerID, Logger.ROUTER);
 		String uri = iTask.iPacket.contentName;
 		String[] a = uri.split("-");
 		if(!a[0].equalsIgnoreCase(prefix))
@@ -60,7 +60,7 @@ public class Server extends Router{
 		//MyRandom.nextPoisson(10) / 100;
 	}
 	private void initPossibility() {
-		Logger.log("Server:" + "initPossibility()", Logger.DEBUG);
+		Logger.log("Server:" + "initPossibility()", Logger.ROUTER);
 		cdf = new double[contentNum];
 		double sum = 0;
 		for(int i = 0; i < contentNum; i++)	//a Harmonic series 
@@ -74,10 +74,10 @@ public class Server extends Router{
 			cdf[i] =  cdf[i - 1] + cdf[0] / (i + 1);
 			sum += cdf[0] / (i + 1);
 		}
-		Logger.log("\tgenPossibility(): sum is" + sum, Logger.DEBUG);
+		Logger.log("\tgenPossibility(): sum is" + sum, Logger.ROUTER);
 	}
 	private void initContentSize() {
-		Logger.log("Server:" + "initContentSize()", Logger.DEBUG);
+		Logger.log("Server:" + "initContentSize()", Logger.ROUTER);
 		contentSize = new int[contentNum];
 		for(int i = 0; i < contentNum; i++)
 		{

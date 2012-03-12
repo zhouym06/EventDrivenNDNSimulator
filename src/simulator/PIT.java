@@ -9,6 +9,7 @@ import logger.Logger;
 import simulator.packet.ContentPacket;
 import simulator.packet.InterestPacket;
 import topology.Router;
+import util.URI;
 
 public class PIT {
 	HashMap<String, ArrayList<Router>> pendingInterest = null;
@@ -43,33 +44,12 @@ public class PIT {
 	}
 	public ArrayList<Router> handle(ContentPacket cPacket) 
 	{
-		Logger.log("PIT:handleContent " + cPacket.contentName, Logger.DETAIL);
-		/*
-		 * for(Entry<String, ArrayList<Router>> e:pendingInterest.entrySet())
-		{
-			Logger.log("\t hasContent " + e.getKey(), Logger.DETAIL);
-		}
-		 * */
-		
-		String uri = cPacket.contentName;
-		String[] strs = uri.split("-");
-		ArrayList<Router> pendingRouters = null;
-		if(strs.length == 3)
-		{
-			pendingRouters = pendingInterest.get(strs[0] + "-" + strs[1]);
-		}
-		else if(strs.length == 2)
-		{
-			pendingRouters = pendingInterest.remove(uri);
-		}
-		else
-		{
-			Logger.log("!!!PIT:handleContent(): contentName fomat error", Logger.ERROR);
-			return null;
-		}
+		Logger.log("PIT:handleContent " + cPacket.contentName, Logger.ROUTER - 1);
+		String prefix = URI.getContentPrefix(cPacket.contentName);
+		ArrayList<Router> pendingRouters = pendingInterest.get(prefix);
 		if(pendingRouters == null)
 		{
-			Logger.log("!!!PIT:handleContent(): we don't have " + uri + " in PIT", Logger.ERROR);
+			Logger.log("!!!PIT:handleContent(): we don't have " + prefix + " in PIT", Logger.ERROR);
 			Logger.log(display(), Logger.ERROR);
 			return null;
 		}

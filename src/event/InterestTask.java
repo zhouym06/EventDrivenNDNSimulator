@@ -17,7 +17,7 @@ public class InterestTask extends Task {
 	}
 	public void execute()
 	{
-		Logger.log(toString() + " execute()", Logger.DEBUG);
+		Logger.log("\tTask:" + toString() + " executing", Logger.DEBUG);
 		target.handle(this, from);
 	}
 	public String toString()

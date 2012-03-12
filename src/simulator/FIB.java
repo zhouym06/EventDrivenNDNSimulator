@@ -37,7 +37,7 @@ public class FIB {								//Forward Information Base
 	public boolean announce(AnnoucePacket aPacket, int fromInterface, double arriveTime)
 	{
 		String uri = aPacket.contentName;
-		Logger.log("FIB:announce(" + uri + " from interface" + fromInterface + ")\t" + "arriveTime" + arriveTime, Logger.DEBUG);
+		Logger.log("FIB:announce(" + uri + " from interface" + fromInterface + ")\t" + "arriveTime" + arriveTime, Logger.ROUTER - 1);
 		FIBEntry entry = null;
 		for(FIBEntry e:entries)
 		{
@@ -51,14 +51,14 @@ public class FIB {								//Forward Information Base
 		if(entry == null)
 		{
 			entries.add(new FIBEntry(aPacket.contentName, fromInterface, aPacket.timeLived, arriveTime));
-			Logger.log("\tFIB:announce new Entry" , Logger.DEBUG);
+			Logger.log("\tFIB:announce new Entry" , Logger.ROUTER - 1);
 			return true;
 		}
 		else
 		{
 			if(entry.getNextInterface() == fromInterface)
 			{
-				Logger.log("\tFIB:announce same Entry" , Logger.DEBUG);
+				Logger.log("\tFIB:announce same Entry" , Logger.ROUTER - 1);
 				return false;
 			}
 			//sorted by ttl first, time second now or arrive time rules?
@@ -67,18 +67,18 @@ public class FIB {								//Forward Information Base
 				entry.setNextInterface(fromInterface);
 				entry.setDistance(aPacket.timeLived);
 				entry.setDelay(arriveTime);
-				Logger.log("\tFIB:announce better ttl" , Logger.DEBUG);
+				Logger.log("\tFIB:announce better ttl" , Logger.ROUTER - 1);
 				return true;
 			}else if(entry.distance == aPacket.timeLived && entry.delay > arriveTime)
 			{
 				entry.setNextInterface(fromInterface);
 				entry.setDistance(aPacket.timeLived);
 				entry.setDelay(arriveTime);
-				Logger.log("\tFIB:announce better delay" , Logger.DEBUG);
+				Logger.log("\tFIB:announce better delay" , Logger.ROUTER - 1);
 				return true;
 			}else
 			{
-				Logger.log("\tFIB:announce worse perfomance" , Logger.DEBUG);
+				Logger.log("\tFIB:announce worse perfomance" , Logger.ROUTER - 1);
 				return false;
 			}
 		}

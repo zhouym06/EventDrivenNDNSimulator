@@ -25,7 +25,7 @@ public class Sink extends Router {
 	}
 	public void handle(ContentTask cTask)
 	{
-		Logger.log("Sink:handleContent" + cTask.cPacket.contentName, Logger.DEBUG);
+		Logger.log("Sink:handleContent" + cTask.cPacket.contentName, Logger.ROUTER);
 	}
 
 }

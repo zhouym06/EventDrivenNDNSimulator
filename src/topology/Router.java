@@ -14,6 +14,8 @@ import simulator.PIT;
 import simulator.cache.Cache;
 import simulator.cache.LRUCache;
 import simulator.packet.*;
+import statistic.Statistic;
+import util.URI;
 
 
 public class Router {
@@ -39,10 +41,13 @@ public class Router {
 		iTask.iPacket.timeLived++;
 		if(cache.contains(iTask.iPacket.contentName))
 		{
+			Statistic.countHit(URI.getContentNo(iTask.iPacket.contentName));
 			ContentTask ct = new ContentTask(cache.getContent(iTask.iPacket.contentName), from, iTask.getTime() + pit.getFowardTime());
 			TimeLine.add(ct);
 			return;
 		}
+
+		Statistic.countMiss(URI.getContentNo(iTask.iPacket.contentName));
 		if(pit.addPI(iTask.iPacket, from))
 		{
 			int i = fib.getNextInterface(iTask.iPacket.contentName);
@@ -55,7 +60,7 @@ public class Router {
 	{
 		aPacket.timeLived++;
 		int index = interfaces.indexOf(fromInterface);
-		Logger.log("Router" + routerID + ":handleAnnouce(" + aPacket.contentName + "): at router" + this.routerID + " from edge" + fromInterface.edgeID + "(index in array " + index + ")", Logger.DEBUG);
+		Logger.log("Router" + routerID + ":handleAnnouce(" + aPacket.contentName + "): at router" + this.routerID + " from edge" + fromInterface.edgeID + "(index in array " + index + ")", Logger.ROUTER);
 		if(fib.announce(aPacket, index, time))
 		{
 			for(Edge e:interfaces)
@@ -66,16 +71,14 @@ public class Router {
 				}
 			}
 		}
-		Logger.log("Router:handleAnnouce fin", Logger.DEBUG);
+		Logger.log("Router:handleAnnouce fin", Logger.ROUTER);
 	}
 	//≤ª∑÷segment¡À
 	public void handle(ContentTask cTask)
 	{
-		Logger.log("Router" + routerID + ":handleContent " + cTask.cPacket.contentName, Logger.DEBUG);
+		Logger.log("Router" + routerID + ":handleContent " + cTask.cPacket.contentName, Logger.ROUTER);
 		cTask.cPacket.timeLived++;
-		// to do
-		cache.handle(cTask.cPacket);
-		
+		cache.handle(cTask.cPacket);	// renew cache
 		ArrayList<Router> rts = pit.handle(cTask.cPacket);
 		for(Router r:rts)
 		{
@@ -90,7 +93,7 @@ public class Router {
 		Logger.log("FIBEntry of " + routerID + ":", Logger.INFO);
 		fib.display();
 		int i = fib.getNextInterface("Server0");
-		Logger.log("\tinterfaces" + i + "routerID" + interfaces.get(i).theOther(this).routerID, Logger.DEBUG);
+		Logger.log("\tinterfaces" + i + "routerID" + interfaces.get(i).theOther(this).routerID, Logger.INFO);
 	}
 	public void display() {
 		Logger.log("Router" + routerID + ":" + " has " + interfaces.size() + " edges", Logger.INFO);

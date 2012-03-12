@@ -2,6 +2,7 @@ package simulator;
 
 import logger.Logger;
 import event.TimeLine;
+import statistic.Statistic;
 import topology.Topology;
 
 public class Simulator {
@@ -17,6 +18,7 @@ public class Simulator {
 		//topo.displayTopology();
 		//topo.displayFIB();
 		TimeLine.execute();
+		Statistic.display();
 	}
 
 }

@@ -16,7 +16,7 @@ public class ContentTask extends Task {
 	}
 	public void execute()
 	{
-		Logger.log(toString() + " execute()", Logger.DEBUG);
+		Logger.log("\tTask:" + toString() + " executing", Logger.DEBUG);
 		target.handle(this);
 	}
 	public void display() {

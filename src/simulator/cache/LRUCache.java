@@ -6,6 +6,8 @@ import logger.Logger;
 
 import simulator.packet.ContentPacket;
 import simulator.packet.InterestPacket;
+import statistic.Statistic;
+import util.URI;
 
 public class LRUCache extends Cache {
 
@@ -14,6 +16,7 @@ public class LRUCache extends Cache {
 	}
 	public boolean add(ContentPacket cp)
 	{
+		 
 		if(contains(cp.contentName))
 		{
 			//renew cache sequence
@@ -24,12 +27,12 @@ public class LRUCache extends Cache {
 					break;
 				index++;
 			}
-			Logger.log("Cache hit" + cp.contentName + " @" + index, Logger.VERY_DETAIL);
+			Logger.log("Renew Cache hit" + cp.contentName + " @" + index, Logger.VERY_DETAIL);
 			cache.offer(cache.remove(index));							//add at last(tail)
 		}
 		else
 		{
-			Logger.log("Cache missed" + cp.contentName, Logger.VERY_DETAIL);
+			Logger.log("Renew Cache missed" + cp.contentName, Logger.VERY_DETAIL);
 			uriMap.put(cp.contentName, cp.size);
 			cache.offer(new CacheElement(cp.contentName,cp.size));		//add at last(head)
 			left -= cp.size;
@@ -39,7 +42,6 @@ public class LRUCache extends Cache {
 				uriMap.remove(ce.uri);
 				left += ce.size;
 			}
-			
 			//renew uriMap
 		}
 		return true;
