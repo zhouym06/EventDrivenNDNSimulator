@@ -18,7 +18,11 @@ public class TimeLine {
 		}
 		tasks.clear();
 	}
-	
+	public static void set(Requests r)
+	{
+		tasks.clear();
+		tasks = r.tasks;
+	}
 	public static void add(Task newTask)
 	{
 		if(tasks == null)

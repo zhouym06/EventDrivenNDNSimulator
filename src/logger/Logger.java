@@ -76,4 +76,15 @@ public class Logger {
 			return "UNKNOWN LEVEL:"+level;
 		}
 	}
+
+	public static void setFile(String string) {
+		try {
+			String logPath =  Config.logRoot + string;
+			logStream = new PrintStream(new FileOutputStream(logPath, true));
+			log(logPath, INFO);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+	}
 }

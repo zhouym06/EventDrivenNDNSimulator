@@ -32,7 +32,7 @@ public class FIB {								//Forward Information Base
 												// that fails our segment control strategy
 	}
 	/*
-	 * @return if the fib have been changed
+	 * Return if the fib have been changed
 	*/
 	public boolean announce(AnnoucePacket aPacket, int fromInterface, double arriveTime)
 	{

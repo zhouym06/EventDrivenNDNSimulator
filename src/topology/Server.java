@@ -17,8 +17,8 @@ public class Server extends Router{
 	//ContentName as prefix-contentNo-segmentNum
 	int contentNum;
 	int maxSize;
-	double[] cdf;						//Cumulative distribution function by power law
-	int[] contentSize;					//sorted by popularity
+	double[] cdf;						//Cumulative distribution function by power law//sorted by popularity
+	int[] contentSize;					
 							
 	public Server(String prefix, int ServerNo, int contentNum, int maxSize) {
 		super(ServerNo, 0);
@@ -59,7 +59,7 @@ public class Server extends Router{
 		return 0.1;
 		//MyRandom.nextPoisson(10) / 100;
 	}
-	private void initPossibility() {
+	private void initPossibility() {		//Cumulative distribution function by power law
 		Logger.log("Server:" + "initPossibility()", Logger.ROUTER);
 		cdf = new double[contentNum];
 		double sum = 0;
@@ -82,9 +82,9 @@ public class Server extends Router{
 		for(int i = 0; i < contentNum; i++)
 		{
 			//even distributed
-			contentSize[i] = (int) Math.ceil((MyRandom.nextDouble() * maxSize));
+			contentSize[i] = (int) Math.floor((MyRandom.nextDouble() * maxSize));
 			/*
-			 * to do
+			 * to do or not to do
 			//in a decreasing reciprocal manner(1/x)
 			//http://www.php-oa.com/2010/05/27/squid-cache-object-size.html
 			//http://www.cs.yale.edu/homes/jqhan/paper/ftp.pdf
@@ -102,11 +102,6 @@ public class Server extends Router{
 		{
 			e.theOther(this).handle(ap, e, e.delay);
 		}
-	}
-	
-	public int getContentNum()
-	{
-		return contentNum;
 	}
 	
 	public int getContentNo(double p)//by binary search
@@ -129,7 +124,7 @@ public class Server extends Router{
 
 	public void  display()
 	{
-		Logger.log("Server" + routerID + ": as " + prefix + " " + " has " + contentNum + "contents and" + interfaces.size() + " edges", Logger.INFO);
+		Logger.log("Server" + routerID + ": as " + prefix + " " + " has " + contentNum + "contents and " + interfaces.size() + " edges", Logger.INFO);
 		for(Edge e: interfaces)
 		{
 			e.display();
