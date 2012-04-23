@@ -11,6 +11,7 @@ public abstract class Packet {
 	public Packet(Packet p)
 	{
 		this.contentName = p.contentName;
+		//this.timeLived = p.timeLived;
 		this.timeLived = p.timeLived + 1;
 	}
 

@@ -78,7 +78,7 @@ public class Router {
 	public void handle(ContentTask cTask)
 	{
 		Logger.log("Router" + routerID + ":handleContent " + cTask.cPacket.contentName, Logger.ROUTER);
-		cTask.cPacket.timeLived++;
+		//cTask.cPacket.timeLived = cTask.cPacket.timeLived++;		// why doesn't this work?
 		cache.handle(cTask.cPacket);	// renew cache
 		ArrayList<Router> rts = pit.handle(cTask.cPacket);
 		for(Router r:rts)

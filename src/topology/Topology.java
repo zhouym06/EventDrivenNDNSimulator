@@ -131,7 +131,6 @@ public class Topology {
 		{
 			topo.servers[i] = new Server("Server" + String.valueOf(i), -100);
 		}
-		
 		// interfaces
 		topo.edgeNum = routerNum - 1 + serverNum + topo.sinkNum;
 		//between routers

@@ -12,7 +12,6 @@ public class Simulator {
 		/**/
 		//Logger.setFile("log.txt");
 		Logger.clear();
-		
 		//Logger.log("generate Topology", Logger.INFO);
 		//Topology topo = new Topology("path");
 		Topology topo[] = new Topology[10];
@@ -22,8 +21,12 @@ public class Simulator {
 			Logger.setFile(String.valueOf(i) + ".txt");
 			int routerNum = 10;
 			int serverNum = 1;
-			int contentNum = 100;
+			int contentNum = 1000;
 			int[] cacheSizes = new int[10];
+			for(int j = 0; j < 10; j++)
+			{
+				cacheSizes[j] = 0;
+			}
 			cacheSizes[i] = 10;
 			topo[i] = Topology.getLineTopology(routerNum, serverNum, contentNum, cacheSizes);
 			//topo[i].displayTopology();
@@ -33,12 +36,16 @@ public class Simulator {
 		Requests r[] = new Requests[10];
 		int requestNum = 10000;
 		int totalRequestTime = 10000;
-		int maxContentNum = 100;
+		int maxContentNum = 1000;
 		for(int i = 0; i < 10; i++)
 		{
 			r[i] = RequestGenerator.getPoissonRequests(requestNum, maxContentNum, totalRequestTime);
 		}
 		//init TimeLine
+		int[][] totalReq = new int [10][10];
+		int[][] totalHit = new int [10][10];
+		int[][] totalMiss = new int [10][10];
+		long[][] totalTTL = new long [10][10];
 		for(int i = 0; i < 10; i++)
 		{
 			for(int j = 0; j < 10; j++)
@@ -46,13 +53,57 @@ public class Simulator {
 				TimeLine.clear();
 				Logger.setFile("topo" + String.valueOf(i) + "-req" + String.valueOf(j) + ".txt");
 				topo[i].setTimeLine(r[j]);
-				Statistic.init(topo[0].contentNum);
+				Statistic.init(topo[i].contentNum);
 				TimeLine.execute();
-				Statistic.display();				
+				Statistic.display();
+				
+				totalReq[i][j] = Statistic.totalRequest;
+				totalHit[i][j] = Statistic.totalCacheHit;
+				totalMiss[i][j] = Statistic.totalCacheMiss;
+				totalTTL[i][j] = Statistic.totalTTL;
 			}
 			
 		}
-		
+		System.out.println("totalRequest");
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				System.out.print(totalReq[i][j]);
+				System.out.print("\t");
+			}
+			System.out.println();
+		}
+		System.out.println("totalCacheHit");
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				System.out.print(totalHit[i][j]);
+				System.out.print("\t");
+			}
+			System.out.println();
+		}
+		System.out.println("totalMiss");
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				System.out.print(totalMiss[i][j]);
+				System.out.print("\t");
+			}
+			System.out.println();
+		}
+		System.out.println("totalTTL");
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				System.out.print(totalTTL[i][j]);
+				System.out.print("\t");
+			}
+			System.out.println();
+		}
 		
 		
 		/*

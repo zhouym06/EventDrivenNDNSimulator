@@ -9,7 +9,9 @@ import logger.Logger;
 import simulator.packet.AnnoucePacket;
 import simulator.packet.ContentPacket;
 import simulator.packet.InterestPacket;
+import statistic.Statistic;
 import util.MyRandom;
+import util.URI;
 
 
 public class Server extends Router{
@@ -34,13 +36,19 @@ public class Server extends Router{
 	{
 		Logger.log("Server:handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + " at router" + this.routerID, Logger.ROUTER);
 		String uri = iTask.iPacket.contentName;
-		String[] a = uri.split("-");
-		if(!a[0].equalsIgnoreCase(prefix))
+		//String[] a = uri.split("-");
+		//if(!a[0].equalsIgnoreCase(prefix))
+		//{
+		//	Logger.log("!!!Server:handleInterest(): Unknown Content:" + uri +" in Server" + routerID + "(" + prefix + ")", Logger.ERROR);
+		//	return;
+		//}
+		//int contentNo = Integer.valueOf(a[1]);
+		int contentNo = URI.getContentNo(uri);
+		if(contentNo == -1)
 		{
 			Logger.log("!!!Server:handleInterest(): Unknown Content:" + uri +" in Server" + routerID + "(" + prefix + ")", Logger.ERROR);
 			return;
 		}
-		int contentNo = Integer.valueOf(a[1]);
 		double time = iTask.getTime();
 		/*//≤ª∑÷segment¡À
 		for(int segNo = 0; segNo < contentSize[contentNo]; segNo++)
@@ -52,6 +60,7 @@ public class Server extends Router{
 		*/
 		time += getServeTime();
 		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, 1), from, time);
+		Statistic.countRequest(contentNo);
 		//ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, contentSize[contentNo]), from, time);
 		TimeLine.add(t);
 	}
@@ -60,6 +69,23 @@ public class Server extends Router{
 		return 0.1;
 		//MyRandom.nextPoisson(10) / 100;
 	}
+	public void announce(double time) {
+		AnnoucePacket ap = new AnnoucePacket(prefix);
+		for(Edge e:interfaces)
+		{
+			e.theOther(this).handle(ap, e, e.delay);
+		}
+	}
+	public void  display()
+	{
+		Logger.log("Server" + routerID + ": as " + prefix + " has " + interfaces.size() + " edges", Logger.INFO);
+		for(Edge e: interfaces)
+		{
+			e.display();
+		}
+	}
+	
+	//moved to Request Generator
 	/*
 	private void initPossibility() {		//Cumulative distribution function by power law
 		Logger.log("Server:" + "initPossibility()", Logger.ROUTER);
@@ -99,13 +125,6 @@ public class Server extends Router{
 		}
 	}
 	*/
-	public void announce(double time) {
-		AnnoucePacket ap = new AnnoucePacket(prefix);
-		for(Edge e:interfaces)
-		{
-			e.theOther(this).handle(ap, e, e.delay);
-		}
-	}
 	/*
 	public int getContentNo(double p)//by binary search
 	{
@@ -126,13 +145,4 @@ public class Server extends Router{
 		return p < cdf[mid] ? getContentNo(p, begin, mid) : getContentNo(p, mid, end);
 	}
 */
-	public void  display()
-	{
-		Logger.log("Server" + routerID + ": as " + prefix + " has " + interfaces.size() + " edges", Logger.INFO);
-		for(Edge e: interfaces)
-		{
-			e.display();
-		}
-	}
-
 }
