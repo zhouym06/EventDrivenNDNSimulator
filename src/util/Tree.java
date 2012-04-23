@@ -6,7 +6,7 @@ public class Tree {
 		int sum = 0;
 		int levelNum = 1;
 		int level;
-		for(level = 1; routerID < sum; level++)
+		for(level = 0; routerID > sum; level++)
 		{
 			levelNum *= treeDegree;
 			sum += levelNum;

@@ -34,6 +34,26 @@ public class Simulator {
 			//topo[i].displayTopology();
 		}*/
 		int[][] cacheSizes = new int[10][3];
+		
+		for(int i = 0; i < 3; i++)
+		{
+			cacheSizes[i*3+0][0] = i*1 + 1;
+			cacheSizes[i*3+0][1] = 0;
+			cacheSizes[i*3+0][2] = 0;
+			
+			cacheSizes[i*3+1][0] = 0;
+			cacheSizes[i*3+1][1] = i*1 + 1;
+			cacheSizes[i*3+1][2] = 0;
+	
+			cacheSizes[i*3+2][0] = 0;
+			cacheSizes[i*3+2][1] = 0;
+			cacheSizes[i*3+2][2] = i*1 + 1;
+		}
+		cacheSizes[9][0] = 50;
+		cacheSizes[9][1] = 50;
+		cacheSizes[9][2] = 50;
+		
+		
 		for(int i = 0; i < 10; i++)
 		{
 			Logger.setFile(String.valueOf(i) + ".txt");
@@ -41,9 +61,6 @@ public class Simulator {
 			int treeLevel = 3;
 			int treeDegree = 3;
 
-			cacheSizes[i][0] = 10;
-			cacheSizes[i][1] = 10;
-			cacheSizes[i][2] = 10;
 			topo[i] = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, cacheSizes[i]);
 			//topo[i] = Topology.getLineTopology(routerNum, serverNum, contentNum, cacheSizes);
 			//topo[i].displayTopology();
@@ -59,8 +76,8 @@ public class Simulator {
 		int maxContentNum = 1000;
 		for(int i = 0; i < requestsNum; i++)
 		{
-			//r[i] = RequestGenerator.getPoissonRequests(requestNum, maxContentNum, totalRequestTime);
-			r[i] = RequestGenerator.genOnOffRequests(requestNum, maxContentNum, totalRequestTime);
+			r[i] = RequestGenerator.getPoissonRequests(requestNum, maxContentNum, totalRequestTime);
+			//r[i] = RequestGenerator.genOnOffRequests(requestNum, maxContentNum, totalRequestTime);
 		}
 		/*
 		System.out.println("totalRequest");
