@@ -1,14 +1,10 @@
-package topology;
+package event;
 
 import java.util.Random;
 
 import logger.Logger;
 import statistic.Statistic;
 import util.MyRandom;
-import event.InterestTask;
-import event.Request;
-import event.Requests;
-import event.TimeLine;
 
 public class RequestGenerator {
 	static double[] cdf;						//Cumulative distribution function by power law//sorted by popularity

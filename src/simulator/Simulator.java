@@ -1,10 +1,10 @@
 package simulator;
 
 import logger.Logger;
+import event.RequestGenerator;
 import event.Requests;
 import event.TimeLine;
 import statistic.Statistic;
-import topology.RequestGenerator;
 import topology.Topology;
 
 public class Simulator {
