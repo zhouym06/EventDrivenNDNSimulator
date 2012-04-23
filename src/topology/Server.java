@@ -60,7 +60,7 @@ public class Server extends Router{
 		*/
 		time += getServeTime();
 		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, 1), from, time);
-		Statistic.countRequest(contentNo);
+		Statistic.countServerLoad(contentNo);
 		//ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, contentSize[contentNo]), from, time);
 		TimeLine.add(t);
 	}

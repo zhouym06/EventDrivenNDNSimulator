@@ -1,7 +1,7 @@
 package simulator.packet;
 
 public abstract class Packet {
-	public int timeLived = 0;
+	public int timeLived = 1;
 	public String contentName;		//or uri, or prefix for announce
 	
 	public Packet(String contentName)

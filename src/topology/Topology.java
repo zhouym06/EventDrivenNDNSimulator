@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import util.MyRandom;
+import util.Tree;
 
 import logger.Logger;
 
@@ -39,7 +40,82 @@ public class Topology {
 	// 			 |-2-sink1
 	// 			 |
 	// 			 |-3-sink2
-	public static Topology getDefaultTopology1() {
+	public static Topology getDefaultTopology1(int cNum) {
+		Logger.log("Topology:" + "getDefaultTopology1()", Logger.INFO);
+		Topology topo = new Topology();
+		topo.routerNum = 4;
+		topo.routers = new Router[topo.routerNum];
+		
+		topo.serverNum = 1;
+		topo.servers = new Server[topo.serverNum];
+		
+		topo.contentNum = cNum;
+		topo.serverOfContent = new int[topo.contentNum];
+		
+		
+		topo.sinkNum = 3;
+		topo.sinks = new Sink[topo.sinkNum];
+		// routers
+		for (int routerID = 0; routerID < topo.routerNum; routerID++) {
+			int cacheSize = 10;
+			topo.routers[routerID] = new Router(routerID, cacheSize);
+		}
+		//sinks
+		for (int i = 0; i < topo.sinkNum; i++) {
+			topo.sinks[i] = new Sink(topo.routers[i+1], -(i+1));
+		}
+		//servers
+		//topo.servers[0] = new Server("Server" + String.valueOf(0), -100, topo.contentNum, 10);
+		topo.servers[0] = new Server("Server" + String.valueOf(0), -100);
+		
+		
+		// interfaces
+		topo.edgeNum = 6;
+		Random random = new Random(System.currentTimeMillis());
+			//between routers
+		for (int i = 1; i < topo.routerNum; i++)
+		{
+			Edge e = new Edge(topo.routers[0], topo.routers[i], i ,random.nextDouble());
+			topo.routers[0].interfaces.add(e);
+			topo.routers[i].interfaces.add(e);
+			//topo.routers[i].interfaceNum = topo.routers[i].interfaces.size();
+		}
+			//edges
+		{
+			Edge e = new Edge(topo.routers[0], topo.servers[0], -1, random.nextDouble());
+			topo.routers[0].interfaces.add(e);
+			topo.servers[0].interfaces.add(e);
+		}
+			//sinks
+		for (int i = 0; i < topo.sinkNum; i++)
+		{
+			Edge e = new Edge(topo.routers[i + 1], topo.sinks[i], -1, random.nextDouble());
+			topo.routers[i + 1].interfaces.add(e);
+			topo.sinks[i].interfaces.add(e);
+		}
+		
+		topo.issueContentOnServer();
+		//topo.serverOfContent= new int[100];
+		//for(int i = 0; i < 100; i++)
+		//	topo.serverOfContent[i] = 0;
+		
+		
+		topo.announce();
+		return topo;
+	}
+	
+	
+	/*
+	1-2-4-8
+	 | | \9
+	 | -5-10
+	 |   \11
+	 -3-6-12
+	   | \13
+	   -7-14
+	     \15
+	*/
+	public static Topology getDefaultTreeTopology() {
 		Logger.log("Topology:" + "getDefaultTopology1()", Logger.INFO);
 		Topology topo = new Topology();
 		topo.routerNum = 4;
@@ -133,7 +209,7 @@ public class Topology {
 		}
 		// interfaces
 		topo.edgeNum = routerNum - 1 + serverNum + topo.sinkNum;
-		//between routers
+			//between routers
 		for (int i = 0; i < topo.routerNum - 1; i++)
 		{
 			Edge e = new Edge(topo.routers[i], topo.routers[i + 1], i , MyRandom.nextDouble());
@@ -153,6 +229,78 @@ public class Topology {
 		{
 			Edge e = new Edge(topo.routers[i], topo.sinks[i], -1, MyRandom.nextDouble());
 			topo.routers[i].interfaces.add(e);
+			topo.sinks[i].interfaces.add(e);
+		}
+		topo.issueContentOnServer();
+		topo.announce();
+		return topo;
+	}
+	
+	
+	//cacheSizes' size should be treeLevel	
+	public static Topology getTreeTopology(int treeLevel, int treeDegree, int serverNum, int contentNum, int[] cacheSizes) {
+		Logger.log("Topology:" + "getLineTopology()", Logger.INFO);
+		Topology topo = new Topology();
+		int routerNum = 1;
+		int levelNum = 1;
+		for(int level = 1; level < treeLevel; level++)
+		{
+			levelNum *= treeDegree;
+			routerNum += levelNum;
+		}
+		topo.routerNum = routerNum;
+		topo.routers = new Router[topo.routerNum];
+		
+		topo.serverNum = serverNum;
+		topo.servers = new Server[topo.serverNum];
+		
+		topo.contentNum = contentNum;
+		topo.serverOfContent = new int[topo.contentNum];
+		
+		topo.sinkNum = routerNum;
+		topo.sinks = new Sink[topo.sinkNum];
+		
+		// routers
+		for (int routerID = 0; routerID < topo.routerNum; routerID++) {
+			topo.routers[routerID] = new Router(routerID, cacheSizes[Tree.getTreeLevel(treeDegree, routerID)]);
+		}
+		//sinks
+		for (int i = 0; i < topo.sinkNum; i++) {
+			topo.sinks[i] = new Sink(topo.routers[routerNum - i - 1], -1);
+		}
+		//servers
+		for (int i = 0; i < topo.serverNum; i++)
+		{
+			topo.servers[i] = new Server("Server" + String.valueOf(i), -100);
+		}
+		// interfaces
+		topo.edgeNum = 0;
+			//between routers
+		for (int i = 1; i < routerNum; i++)
+		{
+			int parent = Tree.getParent(treeDegree, treeLevel, i);
+			
+			for(int j = 0; j < treeDegree; j++)
+			{
+				topo.edgeNum++;
+				Edge e = new Edge(topo.routers[i], topo.routers[parent], topo.edgeNum, MyRandom.nextDouble());
+				topo.routers[i].interfaces.add(e);
+				topo.routers[parent].interfaces.add(e);
+			}
+			//topo.routers[i].interfaceNum = topo.routers[i].interfaces.size();
+		}
+			//servers
+		for (int i = 0; i < topo.serverNum; i++)
+		{
+			Edge e = new Edge(topo.routers[i], topo.servers[i], -1, MyRandom.nextDouble());
+			topo.routers[i].interfaces.add(e);
+			topo.servers[i].interfaces.add(e);
+		}
+			//sinks
+		for (int i = 0; i < topo.sinkNum; i++)
+		{
+			Edge e = new Edge(topo.routers[routerNum - i - 1], topo.sinks[i], -1, MyRandom.nextDouble());
+			topo.routers[routerNum - i - 1].interfaces.add(e);
 			topo.sinks[i].interfaces.add(e);
 		}
 		topo.issueContentOnServer();

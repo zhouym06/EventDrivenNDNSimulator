@@ -55,10 +55,8 @@ public class RequestGenerator {
 		Requests r = new Requests();
 		maxContentNum = contentNum;
 		initCDF(maxContentNum);
-		int serverNo, sinkNo, contentNo;
-		 
-		int sNo, rNo, cNo;
 		
+		int cNo;
 		double time = 0;
 		// Logger.log("c:" + Math.exp(-1), Logger.DETAIL);
 		// ContentName as prefix-contentNo
@@ -66,7 +64,7 @@ public class RequestGenerator {
 		// TODO: also for servers
 		for (int i = 0; i < requestNum; i++) {
 			cNo = (int) Math.floor(getContentNo(MyRandom.nextDouble()));
-			
+			Statistic.countRequest(cNo);
 			// 10 request is generated each second?
 			time += MyRandom.nextPoisson(1) / 10; 
 			r.add(new Request(cNo, time));
@@ -75,7 +73,34 @@ public class RequestGenerator {
 		r.sort();
 		return r;
 	}
-	
+	public static Requests genOnOffRequests(int requestNum, int contentNum, double totalRequestTime) {
+		Requests r = new Requests();
+		maxContentNum = contentNum;
+		initCDF(maxContentNum);
+		int contentNo;
+		int requestCount = 0;
+		while (requestCount < requestNum) {
+			// the moment that "on" started
+			double onTime = totalRequestTime * MyRandom.nextDouble();
+			// the time "on" lasts is Exponential distributed
+			double lamda = 1;
+			double lastTime = MyRandom.nextExp(lamda);
+			double time = 0;
+			while (time < lastTime && requestCount < requestNum) {
+				// Hit of contentNo is distributed by power law in each server
+				contentNo = (int) Math.floor(getContentNo(MyRandom.nextDouble()));
+				Statistic.countRequest(contentNo);
+				// 10 request is generated each second when on?
+				time += MyRandom.nextPoisson(1) / 10;
+				r.add(new Request(contentNo,time));
+				requestCount++;
+				Logger.log("Topology:genOnOffRequests(" + "" + ")" + "\treq Content:" + contentNo + 
+						"\tat " + "(" + onTime + "," + time + ")", Logger.DETAIL);
+			}
+		}
+		r.sort();
+		return r;
+	}
 	
 	
 	
@@ -91,8 +116,7 @@ public class RequestGenerator {
 		//RequestGenerator.genPoissonRequests(requestNum, serverNum, sinkNum, servers, sinks);
 		genOnOffRequests(requestNum, 1000, topo.serverNum, topo.routerNum, topo.sinkNum, topo.servers, topo.sinks);
 	}
-	
-	public static Requests genOnOffRequests(int requestNum, double totalRequestTime, int serverNum, int routerNum, int sinkNum, Server[] servers, Sink[] sinks) {
+		public static Requests genOnOffRequests(int requestNum, double totalRequestTime, int serverNum, int routerNum, int sinkNum, Server[] servers, Sink[] sinks) {
 		Requests r = new Requests();
 		int serverNo, sinkNo, contentNo;
 		Random random = new Random(System.currentTimeMillis());
@@ -134,8 +158,10 @@ public class RequestGenerator {
 		r.sort();
 		return r;
 	}
-
 	*/
+	
+
+	
 	
 	/*
 	public static void genPoissonRequests(int requestNum, int serverNum, int sinkNum, Server[] servers, Sink[] sinks) {

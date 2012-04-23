@@ -9,11 +9,13 @@ public class Statistic {
 	public static int totalCacheHit;
 	public static int totalCacheMiss;
 	public static int totalRequest;
-	public static int totalTTL;
+	public static int totalNetworkLoad;
+	public static int totalServerLoad;
 	public static int[] cacheHitCount;
 	public static int[] cacheMissCount;
 	public static int[] requestCount;
-	public static int[] TTLCount;
+	public static int[] networkLoad;
+	public static int[] serverLoad;
 	
 	
 	public static void init(int cNum)
@@ -22,16 +24,23 @@ public class Statistic {
 		totalCacheHit = 0;
 		totalCacheMiss = 0;
 		totalRequest = 0;
-		totalTTL = 0;
+		totalNetworkLoad = 0;
+		totalServerLoad = 0;
 		cacheHitCount = new int [contentNum];
 		cacheMissCount = new int [contentNum];
 		requestCount = new int [contentNum];
-		TTLCount = new int [contentNum];
+		networkLoad = new int [contentNum];
+		serverLoad = new int [contentNum];
 	}
 	public static void countRequest(int contentNo)
 	{
 		totalRequest++;
 		requestCount[contentNo]++;
+	}
+	public static void countServerLoad(int contentNo)
+	{
+		totalServerLoad++;
+		serverLoad[contentNo]++;
 	}
 	public static void countHit(int contentNo)
 	{
@@ -45,19 +54,20 @@ public class Statistic {
 	}
 	public static void addTTL(int contentNo, int ttl)
 	{
-		totalTTL += ttl;
-		TTLCount[contentNo] += ttl;
+		totalNetworkLoad += ttl;
+		networkLoad[contentNo] += ttl;
 	}
+	
 	
 	public static void display()
 	{
 		Logger.log("totalCacheMiss:" + (double)totalCacheMiss / (double)(totalCacheMiss + totalCacheHit) + " ," + totalCacheMiss, Logger.INFO);
 		Logger.log("totalCacheHit:" + (double)totalCacheHit / (double)(totalCacheMiss + totalCacheHit) + " ," + totalCacheHit, Logger.INFO);
 		
-		Logger.log("totalTTL:" + totalRequest, Logger.INFO);
-		Logger.log("totalTTL:" + totalTTL, Logger.INFO);
+		Logger.log("totalRequest:" + totalRequest, Logger.INFO);
+		Logger.log("totalNetworkLoad:" + totalNetworkLoad, Logger.INFO);
 		for(int i = 0;i<cacheHitCount.length;i++)
-			Logger.log("Content-" + i + ": AllReq:" + requestCount[i] + ", hit:" + cacheHitCount[i] + ", miss:" + cacheMissCount[i] + ", ttl:" + TTLCount[i], Logger.INFO);
+			Logger.log("Content-" + i + ": AllReq:" + requestCount[i] + ", hit:" + cacheHitCount[i] + ", miss:" + cacheMissCount[i] + ", networkLoad:" + networkLoad[i], Logger.INFO);
 	}
 	public static void clear()
 	{
@@ -65,11 +75,13 @@ public class Statistic {
 		totalCacheHit = 0;
 		totalCacheMiss = 0;
 		totalRequest = 0;
-		totalTTL = 0;
+		totalNetworkLoad = 0;
+		totalServerLoad = 0;
 		cacheHitCount = new int [contentNum];
 		cacheMissCount = new int [contentNum];
 		requestCount = new int [contentNum];
-		TTLCount = new int [contentNum];
+		networkLoad = new int [contentNum];
+		serverLoad = new int [contentNum];
 	}
 	
 
