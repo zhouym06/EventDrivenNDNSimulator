@@ -8,6 +8,7 @@ import util.MyRandom;
 import logger.Logger;
 
 import event.InterestTask;
+import event.Request;
 import event.Requests;
 import event.TimeLine;
 
@@ -33,7 +34,6 @@ public class Topology {
 		//TODO:
 
 	}
-
 	// server0-0-|-1-sink0
 	// 		     |
 	// 			 |-2-sink1
@@ -50,9 +50,7 @@ public class Topology {
 		
 		topo.contentNum = 100;
 		topo.serverOfContent = new int[topo.contentNum];
-		for(int i = 0; i < 100; i++)
-			topo.serverOfContent[i] = 0;
-		topo.issueContentOnServer();
+		
 		
 		topo.sinkNum = 3;
 		topo.sinks = new Sink[topo.sinkNum];
@@ -67,6 +65,9 @@ public class Topology {
 		}
 		//servers
 		topo.servers[0] = new Server("Server" + String.valueOf(0), -100, topo.contentNum, 10);
+		
+		
+		
 		// interfaces
 		topo.edgeNum = 6;
 		Random random = new Random(System.currentTimeMillis());
@@ -92,10 +93,17 @@ public class Topology {
 			topo.sinks[i].interfaces.add(e);
 		}
 		
+		topo.issueContentOnServer();
+		//topo.serverOfContent= new int[100];
+		//for(int i = 0; i < 100; i++)
+		//	topo.serverOfContent[i] = 0;
+		
+		
 		topo.announce();
 		return topo;
 	}
 
+	//cacheSizes' size should be routerNum
 	public static Topology getLineTopology(int routerNum, int serverNum, int contentNum, int[] cacheSizes) {
 		Logger.log("Topology:" + "getLineTopology()", Logger.INFO);
 		Topology topo = new Topology();
@@ -107,16 +115,12 @@ public class Topology {
 		
 		topo.contentNum = contentNum;
 		topo.serverOfContent = new int[topo.contentNum];
-		for(int i = 0; i < contentNum; i++)
-			topo.serverOfContent[i] = 0;
-		topo.issueContentOnServer();
 		
 		topo.sinkNum = routerNum;
 		topo.sinks = new Sink[topo.sinkNum];
 		// routers
 		for (int routerID = 0; routerID < topo.routerNum; routerID++) {
-			int cacheSize = 190;
-			topo.routers[routerID] = new Router(routerID, cacheSize);
+			topo.routers[routerID] = new Router(routerID, cacheSizes[routerID]);
 		}
 		//sinks
 		for (int i = 0; i < topo.sinkNum; i++) {
@@ -126,37 +130,56 @@ public class Topology {
 		topo.servers[0] = new Server("Server" + String.valueOf(0), -100, topo.contentNum, 10);
 		// interfaces
 		topo.edgeNum = 6;
-		Random random = new Random(System.currentTimeMillis());
-			//between routers
+		//between routers
 		for (int i = 1; i < topo.routerNum; i++)
 		{
-			Edge e = new Edge(topo.routers[0], topo.routers[i], i ,random.nextDouble());
+			Edge e = new Edge(topo.routers[0], topo.routers[i], i , MyRandom.nextDouble());
 			topo.routers[0].interfaces.add(e);
 			topo.routers[i].interfaces.add(e);
 			//topo.routers[i].interfaceNum = topo.routers[i].interfaces.size();
 		}
 			//edges
 		{
-			Edge e = new Edge(topo.routers[0], topo.servers[0], -1, random.nextDouble());
+			Edge e = new Edge(topo.routers[0], topo.servers[0], -1, MyRandom.nextDouble());
 			topo.routers[0].interfaces.add(e);
 			topo.servers[0].interfaces.add(e);
 		}
 			//sinks
 		for (int i = 0; i < topo.sinkNum; i++)
 		{
-			Edge e = new Edge(topo.routers[i + 1], topo.sinks[i], -1, random.nextDouble());
+			Edge e = new Edge(topo.routers[i + 1], topo.sinks[i], -1, MyRandom.nextDouble());
 			topo.routers[i + 1].interfaces.add(e);
 			topo.sinks[i].interfaces.add(e);
 		}
-		
+		topo.issueContentOnServer();
 		topo.announce();
 		return topo;
 	}
 
+	public void setTimeLine(Requests reqs)
+	{
+		TimeLine.clear();
+		int serverNo;
+		int sinkNo;
+		for(Request r:reqs.reqs)
+		{
+			serverNo = getServerNoOfContent(r.getContentNo());
+			sinkNo = (int) Math.floor(MyRandom.nextDouble() * sinkNum);
+			String uri = servers[serverNo].prefix + "-" + String.valueOf(r.getContentNo());
+			TimeLine.addLast(new InterestTask(uri, sinks[sinkNo].linkedTo,  sinks[sinkNo], r.getTime()));
+		}
+	}
 
+	public int getServerNoOfContent(int ContentNo)
+	{		
+		return serverOfContent[ContentNo];
+	}
 	private void issueContentOnServer() {
-		// TODO Auto-generated method stub
-		
+		serverOfContent = new int[contentNum];
+		for(int i = 0; i < contentNum;i ++)
+		{
+			serverOfContent[i] = (int) Math.floor(MyRandom.nextDouble() * serverNum);
+		}
 	}
 
 	public void announce() {
@@ -192,6 +215,7 @@ public class Topology {
 			routers[i].displayFIB();
 		}
 	}
+	/*
 	
 	public Requests getOnOffRequests(int requestNum, int totalRequestTime)
 	{
@@ -207,5 +231,5 @@ public class Topology {
 		
 		TimeLine.set(r);
 	}
-
+*/
 }

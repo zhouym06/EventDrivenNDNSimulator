@@ -6,12 +6,75 @@ import logger.Logger;
 import statistic.Statistic;
 import util.MyRandom;
 import event.InterestTask;
+import event.Request;
 import event.Requests;
 import event.TimeLine;
 
 public class RequestGenerator {
-	double[] cdf;						//Cumulative distribution function by power law//sorted by popularity
+	static double[] cdf;						//Cumulative distribution function by power law//sorted by popularity
+	static int maxContentNum;
 	//TODO: rewrite for server distribution
+	private static void initCDF(int maxContentNum)
+	{
+		Logger.log("Server:" + "initCDF(" + maxContentNum + ")", Logger.DEBUG);
+		cdf = new double[maxContentNum];
+		//Cumulative distribution function by power law
+		double sum = 0;
+		for(int i = 0; i < maxContentNum; i++)	//a Harmonic series 
+		{
+			sum += 1/ ((double)i + 1);
+		}
+		cdf[0] = 1/ sum;
+		sum = cdf[0];
+		for(int i = 1; i < maxContentNum; i++)
+		{
+			cdf[i] =  cdf[i - 1] + cdf[0] / (i + 1);
+			sum += cdf[0] / (i + 1);
+		}
+		Logger.log("\tinitCDF(): sum is" + sum, Logger.DEBUG);
+	}
+	private static int getContentNo(double rank)//by binary search
+	{
+		int result = getContentNo(rank, 0, maxContentNum);
+		//Logger.log("Server:" + "getContentNo()" + p + ":" + result, Logger.DETAIL);
+		return result;		
+	}
+	private static int getContentNo(double p, int begin, int end)
+	{
+		if(begin == end)
+			return begin;
+		if(begin == end - 1)
+		{
+			return p < cdf[begin] ? begin : end;
+		}
+		int mid = (int) Math.round(begin + ((double) (end - begin)) * 0.3);
+		return p < cdf[mid] ? getContentNo(p, begin, mid) : getContentNo(p, mid, end);
+	}
+	
+	public static Requests getPoissonRequests(int requestNum, int contentNum, double totalRequestTime) {
+		Requests r = new Requests();
+		maxContentNum = contentNum;
+		initCDF(maxContentNum);
+		int serverNo, sinkNo, contentNo;
+		 
+		int sNo, rNo, cNo;
+		
+		double time = 0;
+		// Logger.log("c:" + Math.exp(-1), Logger.DETAIL);
+		// ContentName as prefix-contentNo
+		// Hit of contentNo is distributed by power law in each server
+		// TODO: also for servers
+		for (int i = 0; i < requestNum; i++) {
+			cNo = (int) Math.floor(getContentNo(MyRandom.nextDouble()));
+			
+			// 10 request is generated each second?
+			time += MyRandom.nextPoisson(1) / 10; 
+			r.add(new Request(cNo, time));
+			Logger.log("RequestGenerator:genPoissonRequests(" + i + ")" + "to\tContent" + cNo + "\tat " + time, Logger.DETAIL);
+		}
+		r.sort();
+		return r;
+	}
 	
 	
 	
@@ -21,12 +84,7 @@ public class RequestGenerator {
 	
 	
 	
-	
-	
-	
-	
-	
-	/**/
+	/*
 	public static void genDefaultRequests1(Topology topo) {
 		Logger.log("Topology:" + "genDefaultRequests1()", Logger.INFO);
 		int requestNum = 1000;
@@ -63,8 +121,9 @@ public class RequestGenerator {
 				String uri = servers[serverNo].prefix + "-" + String.valueOf(contentNo);
 				// 10 request is generated each second when on?
 				time += MyRandom.nextPoisson(1) / 10;
-				r.add(new InterestTask(uri, sinks[sinkNo].linkedTo, sinks[sinkNo],
-						onTime + time));
+				r.add(new Request(uri,time));
+				//r.add(new InterestTask(uri, sinks[sinkNo].linkedTo, sinks[sinkNo],
+				//		onTime + time));
 				//TimeLine.add(new InterestTask(uri, sinks[sinkNo].linkedTo, sinks[sinkNo],
 				//		onTime + time));
 				requestCount++;
@@ -72,11 +131,13 @@ public class RequestGenerator {
 				//r		+ uri + "\tat " + (onTime + time), Logger.DETAIL);
 			}
 		}
+		r.sort();
 		return r;
 	}
 
+	*/
 	
-
+	/*
 	public static void genPoissonRequests(int requestNum, int serverNum, int sinkNum, Server[] servers, Sink[] sinks) {
 		TimeLine.clear();
 		
@@ -100,6 +161,6 @@ public class RequestGenerator {
 			Logger.log("Topology:genPoissonRequests(" + i + ")" + "to\tSink" + sinkNo + "\trequest:"
 					+ uri + "\tat " + time, Logger.DEBUG);
 		}
-	}
+	}*/
 	
 }

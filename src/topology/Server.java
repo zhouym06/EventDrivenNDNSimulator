@@ -17,7 +17,7 @@ public class Server extends Router{
 	//ContentName as prefix-contentNo-segmentNum
 	int contentNum;
 	int maxSize;
-	double[] cdf;						//Cumulative distribution function by power law//sorted by popularity
+	//double[] cdf;						//Cumulative distribution function by power law//sorted by popularity
 	int[] contentSize;					
 							
 	public Server(String prefix, int ServerNo, int contentNum, int maxSize) {
@@ -26,7 +26,7 @@ public class Server extends Router{
 		this.prefix = prefix;
 		this.contentNum = contentNum;
 		this.maxSize = maxSize;
-		initPossibility();
+		//initPossibility();
 		initContentSize();
 	}
 	//≤ª∑÷segment¡À
@@ -59,6 +59,7 @@ public class Server extends Router{
 		return 0.1;
 		//MyRandom.nextPoisson(10) / 100;
 	}
+	/*
 	private void initPossibility() {		//Cumulative distribution function by power law
 		Logger.log("Server:" + "initPossibility()", Logger.ROUTER);
 		cdf = new double[contentNum];
@@ -76,6 +77,7 @@ public class Server extends Router{
 		}
 		Logger.log("\tgenPossibility(): sum is" + sum, Logger.ROUTER);
 	}
+	*/
 	private void initContentSize() {
 		Logger.log("Server:" + "initContentSize()", Logger.ROUTER);
 		contentSize = new int[contentNum];
@@ -103,13 +105,14 @@ public class Server extends Router{
 			e.theOther(this).handle(ap, e, e.delay);
 		}
 	}
-	
+	/*
 	public int getContentNo(double p)//by binary search
 	{
 		int result = getContentNo(p, 0, contentNum);
 		//Logger.log("Server:" + "getContentNo()" + p + ":" + result, Logger.DETAIL);
 		return result;
 	}
+	
 	private int getContentNo(double p, int begin, int end)
 	{
 		if(begin == end)
@@ -121,7 +124,7 @@ public class Server extends Router{
 		int mid = (int) Math.round(begin + ((double) (end - begin)) * 0.3);
 		return p < cdf[mid] ? getContentNo(p, begin, mid) : getContentNo(p, mid, end);
 	}
-
+*/
 	public void  display()
 	{
 		Logger.log("Server" + routerID + ": as " + prefix + " " + " has " + contentNum + "contents and " + interfaces.size() + " edges", Logger.INFO);

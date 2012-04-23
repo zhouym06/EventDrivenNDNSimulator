@@ -18,11 +18,7 @@ public class TimeLine {
 		}
 		tasks.clear();
 	}
-	public static void set(Requests r)
-	{
-		tasks.clear();
-		tasks = r.tasks;
-	}
+	
 	public static void add(Task newTask)
 	{
 		if(tasks == null)
@@ -52,6 +48,24 @@ public class TimeLine {
 		}
 		tasks.addLast(newTask);
 		Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG - 1);
+	}
+	public static void addLast(Task newTask)
+	{
+		if(tasks == null)
+		{
+			tasks = new LinkedList<Task>();
+			tasks.add(newTask);
+			Logger.log("TimeLine:" + newTask.toString() + " addlast()", Logger.DEBUG - 1);
+			return;
+		}
+		if(tasks.size() == 0)
+		{
+			tasks.add(newTask);
+			Logger.log("TimeLine:" + newTask.toString() + " addlast()", Logger.DEBUG - 1);
+			return;
+		}
+		tasks.addLast(newTask);
+		Logger.log("TimeLine:" + newTask.toString() + " addlast()", Logger.DEBUG - 1);
 	}
 	public static void execute()
 	{

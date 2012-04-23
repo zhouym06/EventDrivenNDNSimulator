@@ -1,45 +1,48 @@
 package event;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Random;
+
+import statistic.Statistic;
+import event.Request;
+import topology.Server;
+import topology.Sink;
+import util.MyRandom;
 
 import logger.Logger;
 
 public class Requests {
-	public LinkedList<Task> tasks = null;
+	public LinkedList<Request> reqs = null;
+	
 	public Requests()
 	{
-		tasks = new LinkedList<Task>();
-	}
-	public void add(Task newTask)
-	{
-		if(tasks == null)
-		{
-			tasks = new LinkedList<Task>();
-			tasks.add(newTask);
-			Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG - 1);
-			return;
-		}
-		if(tasks.size() == 0)
-		{
-			tasks.add(newTask);
-			Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG - 1);
-			return;
-		}
-		int prev = 0;
-		for(Task t:tasks)
-		{
-			if(t.time > newTask.time)
-			{
-				tasks.add(prev, newTask);
-				Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG - 1);
-				return;
-			}
-			else
-				prev++;
-		}
-		tasks.addLast(newTask);
-		Logger.log("TimeLine:" + newTask.toString() + " added()", Logger.DEBUG - 1);
+		reqs = new LinkedList<Request>();
 		
 	}
+	public void add(Request newRequest)
+	{
+		if(reqs == null)
+		{
+			reqs = new LinkedList<Request>();
+			reqs.add(newRequest);
+			Logger.log("TimeLine:" + newRequest.toString() + " added()", Logger.DEBUG - 1);
+			return;
+		}
+		if(reqs.size() == 0)
+		{
+			reqs.add(newRequest);
+			Logger.log("TimeLine:" + newRequest.toString() + " added()", Logger.DEBUG - 1);
+			return;
+		}
+		reqs.addLast(newRequest);
+		Logger.log("TimeLine:" + newRequest.toString() + " added()", Logger.DEBUG - 1);
+		
+	}
+	public void sort()
+	{
+		Collections.sort(reqs);
+	}
+	
 	
 }

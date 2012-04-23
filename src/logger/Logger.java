@@ -7,7 +7,7 @@ import java.util.Date;
 import config.Config;
 
 public class Logger {
-	static final String logPath = Config.logPath;
+	static String logPath = Config.logPath;
 	static PrintStream logStream = null;
 	
 	public static final int VERY_DETAIL = 0;
@@ -20,7 +20,7 @@ public class Logger {
 	public static final int NONE = 60;
 	
 	//public static final String[] levelName = {"VDETAIL", "DETAIL", "DEBUG", "INFO", "WARNING", "ERROR", "NONE"};
-	public static int currentLevel = 20;
+	public static int currentLevel = DEBUG;
 	
 	public static void log(String s, int level)
 	{
@@ -79,7 +79,7 @@ public class Logger {
 
 	public static void setFile(String string) {
 		try {
-			String logPath =  Config.logRoot + string;
+			logPath =  Config.logRoot + string;
 			logStream = new PrintStream(new FileOutputStream(logPath, true));
 			log(logPath, INFO);
 		} catch (FileNotFoundException e) {

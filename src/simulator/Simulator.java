@@ -9,7 +9,7 @@ import topology.Topology;
 
 public class Simulator {
 	public static void main(String[] args) {
-		/*
+		/**/
 		Logger.setFile("log.txt");
 		Logger.clear();
 		
@@ -27,15 +27,15 @@ public class Simulator {
 		int maxContentNum = 100;
 		for(int i = 0; i < 10; i++)
 		{
-			r[i] = Requests.getOnOffRequests(requestNum, totalRequestTime, maxContentNum);
+			r[i] = RequestGenerator.getPoissonRequests(requestNum, maxContentNum, totalRequestTime);
 		}
 		//init TimeLine
-		topo.distribute(r[i]);
+		topo[0].setTimeLine(r[0]);
 		
 		
-		Statistic.init(topo.contentNum);
-		*/
-		
+		Statistic.init(topo[0].contentNum);
+		TimeLine.execute();
+		Statistic.display();
 		/*
 		Logger.clear();
 		Logger.log("generate Topology", Logger.INFO);
