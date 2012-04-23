@@ -3,6 +3,8 @@ package topology;
 import java.util.ArrayList;
 
 import simulator.packet.ContentPacket;
+import statistic.Statistic;
+import util.URI;
 import event.ContentTask;
 import event.TimeLine;
 import logger.Logger;
@@ -25,6 +27,7 @@ public class Sink extends Router {
 	}
 	public void handle(ContentTask cTask)
 	{
+		Statistic.addTTL(URI.getContentNo(cTask.cPacket.contentName), cTask.cPacket.timeLived);
 		Logger.log("Sink:handleContent" + cTask.cPacket.contentName, Logger.ROUTER);
 	}
 

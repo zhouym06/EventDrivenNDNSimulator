@@ -20,7 +20,7 @@ public class Logger {
 	public static final int NONE = 60;
 	
 	//public static final String[] levelName = {"VDETAIL", "DETAIL", "DEBUG", "INFO", "WARNING", "ERROR", "NONE"};
-	public static int currentLevel = DEBUG;
+	public static int currentLevel = INFO;
 	
 	public static void log(String s, int level)
 	{

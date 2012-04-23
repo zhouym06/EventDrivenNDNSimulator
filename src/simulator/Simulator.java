@@ -10,15 +10,24 @@ import topology.Topology;
 public class Simulator {
 	public static void main(String[] args) {
 		/**/
-		Logger.setFile("log.txt");
+		//Logger.setFile("log.txt");
 		Logger.clear();
 		
-		Logger.log("generate Topology", Logger.INFO);
+		//Logger.log("generate Topology", Logger.INFO);
 		//Topology topo = new Topology("path");
-		Topology topo[] = new Topology[3];
-		topo[0] = Topology.getDefaultTopology1();
-		topo[1] = Topology.getDefaultTopology1();
-		topo[2] = Topology.getDefaultTopology1();
+		Topology topo[] = new Topology[10];
+		//topo[0] = Topology.getDefaultTopology1();
+		for(int i = 0; i < 10; i++)
+		{
+			Logger.setFile(String.valueOf(i) + ".txt");
+			int routerNum = 10;
+			int serverNum = 1;
+			int contentNum = 100;
+			int[] cacheSizes = new int[10];
+			cacheSizes[i] = 10;
+			topo[i] = Topology.getLineTopology(routerNum, serverNum, contentNum, cacheSizes);
+			//topo[i].displayTopology();
+		}
 		
 		Logger.log("generate Requests", Logger.INFO);
 		Requests r[] = new Requests[10];
@@ -30,12 +39,22 @@ public class Simulator {
 			r[i] = RequestGenerator.getPoissonRequests(requestNum, maxContentNum, totalRequestTime);
 		}
 		//init TimeLine
-		topo[0].setTimeLine(r[0]);
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				TimeLine.clear();
+				Logger.setFile("topo" + String.valueOf(i) + "-req" + String.valueOf(j) + ".txt");
+				topo[i].setTimeLine(r[j]);
+				Statistic.init(topo[0].contentNum);
+				TimeLine.execute();
+				Statistic.display();				
+			}
+			
+		}
 		
 		
-		Statistic.init(topo[0].contentNum);
-		TimeLine.execute();
-		Statistic.display();
+		
 		/*
 		Logger.clear();
 		Logger.log("generate Topology", Logger.INFO);

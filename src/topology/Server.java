@@ -15,19 +15,19 @@ import util.MyRandom;
 public class Server extends Router{
 	String prefix;
 	//ContentName as prefix-contentNo-segmentNum
-	int contentNum;
-	int maxSize;
+	//int contentNum;
+	//int maxSize;
 	//double[] cdf;						//Cumulative distribution function by power law//sorted by popularity
-	int[] contentSize;					
+	//int[] contentSize;					
 							
-	public Server(String prefix, int ServerNo, int contentNum, int maxSize) {
+	public Server(String prefix, int ServerNo) {
 		super(ServerNo, 0);
 		
 		this.prefix = prefix;
-		this.contentNum = contentNum;
-		this.maxSize = maxSize;
+		//this.contentNum = contentNum;
+		//this.maxSize = maxSize;
 		//initPossibility();
-		initContentSize();
+		//initContentSize();
 	}
 	//≤ª∑÷segment¡À
 	public void handle(InterestTask iTask, Router from)	
@@ -51,7 +51,8 @@ public class Server extends Router{
 		}
 		*/
 		time += getServeTime();
-		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, contentSize[contentNo]), from, time);
+		ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, 1), from, time);
+		//ContentTask t = new ContentTask(new ContentPacket(prefix + "-" + contentNo, contentSize[contentNo]), from, time);
 		TimeLine.add(t);
 	}
 	public double getServeTime()
@@ -77,7 +78,7 @@ public class Server extends Router{
 		}
 		Logger.log("\tgenPossibility(): sum is" + sum, Logger.ROUTER);
 	}
-	*/
+	
 	private void initContentSize() {
 		Logger.log("Server:" + "initContentSize()", Logger.ROUTER);
 		contentSize = new int[contentNum];
@@ -85,19 +86,19 @@ public class Server extends Router{
 		{
 			//even distributed
 			contentSize[i] = (int) Math.floor((MyRandom.nextDouble() * maxSize));
-			/*
-			 * to do or not to do
+			
+			// to do or not to do
 			//in a decreasing reciprocal manner(1/x)
 			//http://www.php-oa.com/2010/05/27/squid-cache-object-size.html
 			//http://www.cs.yale.edu/homes/jqhan/paper/ftp.pdf
-			double tmp = ( MyRandom.nextDouble() * (maxSize-1) ) + ( 1 / (double)maxSize );
-			contentSize[i] = (int)(Math.ceil(1 / tmp));
-			*/
+			//double tmp = ( MyRandom.nextDouble() * (maxSize-1) ) + ( 1 / (double)maxSize );
+			//contentSize[i] = (int)(Math.ceil(1 / tmp));
+			
 			//Logger.log("\tinitContentSize(" + i + "):" + "size" + size[i], Logger.VERY_DETAIL);
 			Logger.log("\tinitContentSize(" + i + "):" + "contentSize" + contentSize[i], Logger.VERY_DETAIL);
 		}
 	}
-	
+	*/
 	public void announce(double time) {
 		AnnoucePacket ap = new AnnoucePacket(prefix);
 		for(Edge e:interfaces)
@@ -127,7 +128,7 @@ public class Server extends Router{
 */
 	public void  display()
 	{
-		Logger.log("Server" + routerID + ": as " + prefix + " " + " has " + contentNum + "contents and " + interfaces.size() + " edges", Logger.INFO);
+		Logger.log("Server" + routerID + ": as " + prefix + " has " + interfaces.size() + " edges", Logger.INFO);
 		for(Edge e: interfaces)
 		{
 			e.display();

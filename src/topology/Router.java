@@ -67,6 +67,7 @@ public class Router {
 			{
 				if(!e.equals(fromInterface))
 				{
+					
 					e.theOther(this).handle(new AnnoucePacket(aPacket), e, time + e.delay);
 				}
 			}
@@ -90,10 +91,10 @@ public class Router {
 		
 	}
 	public void displayFIB() {
-		Logger.log("FIBEntry of " + routerID + ":", Logger.INFO);
+		Logger.log("FIBEntry of " + routerID + ":", Logger.DEBUG);
 		fib.display();
 		int i = fib.getNextInterface("Server0");
-		Logger.log("\tinterfaces" + i + "routerID" + interfaces.get(i).theOther(this).routerID, Logger.INFO);
+		Logger.log("\tinterfaces" + i + "routerID" + interfaces.get(i).theOther(this).routerID, Logger.DEBUG);
 	}
 	public void display() {
 		Logger.log("Router" + routerID + ":" + " has " + interfaces.size() + " edges", Logger.INFO);

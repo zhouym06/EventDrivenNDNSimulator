@@ -64,8 +64,8 @@ public class Topology {
 			topo.sinks[i] = new Sink(topo.routers[i+1], -(i+1));
 		}
 		//servers
-		topo.servers[0] = new Server("Server" + String.valueOf(0), -100, topo.contentNum, 10);
-		
+		//topo.servers[0] = new Server("Server" + String.valueOf(0), -100, topo.contentNum, 10);
+		topo.servers[0] = new Server("Server" + String.valueOf(0), -100);
 		
 		
 		// interfaces
@@ -124,31 +124,36 @@ public class Topology {
 		}
 		//sinks
 		for (int i = 0; i < topo.sinkNum; i++) {
-			topo.sinks[i] = new Sink(topo.routers[i+1], -(i+1));
+			topo.sinks[i] = new Sink(topo.routers[i], -1);
 		}
 		//servers
-		topo.servers[0] = new Server("Server" + String.valueOf(0), -100, topo.contentNum, 10);
-		// interfaces
-		topo.edgeNum = 6;
-		//between routers
-		for (int i = 1; i < topo.routerNum; i++)
+		for (int i = 0; i < topo.serverNum; i++)
 		{
-			Edge e = new Edge(topo.routers[0], topo.routers[i], i , MyRandom.nextDouble());
-			topo.routers[0].interfaces.add(e);
+			topo.servers[i] = new Server("Server" + String.valueOf(i), -100);
+		}
+		
+		// interfaces
+		topo.edgeNum = routerNum - 1 + serverNum + topo.sinkNum;
+		//between routers
+		for (int i = 0; i < topo.routerNum - 1; i++)
+		{
+			Edge e = new Edge(topo.routers[i], topo.routers[i + 1], i , MyRandom.nextDouble());
 			topo.routers[i].interfaces.add(e);
+			topo.routers[i + 1].interfaces.add(e);
 			//topo.routers[i].interfaceNum = topo.routers[i].interfaces.size();
 		}
-			//edges
+			//servers
+		for (int i = 0; i < topo.serverNum; i++)
 		{
-			Edge e = new Edge(topo.routers[0], topo.servers[0], -1, MyRandom.nextDouble());
-			topo.routers[0].interfaces.add(e);
-			topo.servers[0].interfaces.add(e);
+			Edge e = new Edge(topo.routers[i], topo.servers[i], -1, MyRandom.nextDouble());
+			topo.routers[i].interfaces.add(e);
+			topo.servers[i].interfaces.add(e);
 		}
 			//sinks
 		for (int i = 0; i < topo.sinkNum; i++)
 		{
-			Edge e = new Edge(topo.routers[i + 1], topo.sinks[i], -1, MyRandom.nextDouble());
-			topo.routers[i + 1].interfaces.add(e);
+			Edge e = new Edge(topo.routers[i], topo.sinks[i], -1, MyRandom.nextDouble());
+			topo.routers[i].interfaces.add(e);
 			topo.sinks[i].interfaces.add(e);
 		}
 		topo.issueContentOnServer();
@@ -175,6 +180,7 @@ public class Topology {
 		return serverOfContent[ContentNo];
 	}
 	private void issueContentOnServer() {
+		//TO DO: set contentSize, now it's all 1
 		serverOfContent = new int[contentNum];
 		for(int i = 0; i < contentNum;i ++)
 		{

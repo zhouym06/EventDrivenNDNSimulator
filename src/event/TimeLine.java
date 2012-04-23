@@ -77,9 +77,10 @@ public class TimeLine {
 			Task t = tasks.removeFirst();
 			t.execute();
 			count++;
-			if(count % 50 == 0)
-				Logger.log(count + "tasks have been executed£¬ now remain" + tasks.size(), Logger.INFO);
+			if(count % 100 == 0)
+				Logger.log(count + "tasks have been executed£¬ now remain" + tasks.size(), Logger.DEBUG);
 		}
+		Logger.log(count + "tasks have been executed£¬", Logger.INFO);
 	}
 	public static void display()
 	{
