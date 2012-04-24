@@ -32,15 +32,18 @@ public class LRUCache extends Cache {
 		}
 		else
 		{
-			Logger.log("Renew Cache missed" + cp.contentName, Logger.VERY_DETAIL);
-			uriMap.put(cp.contentName, cp.size);
-			cache.offer(new CacheElement(cp.contentName,cp.size));		//add at last(head)
-			left -= cp.size;
-			while(left < 0)
+			//if(cp.timeLived % 2 == 1)
 			{
-				CacheElement ce = cache.poll();							//remove from first
-				uriMap.remove(ce.uri);
-				left += ce.size;
+				Logger.log("Renew Cache missed" + cp.contentName, Logger.VERY_DETAIL);
+				uriMap.put(cp.contentName, cp.size);
+				cache.offer(new CacheElement(cp.contentName,cp.size));		//add at last(tail)
+				left -= cp.size;
+				while(left < 0)
+				{
+					CacheElement ce = cache.poll();							//remove from first
+					uriMap.remove(ce.uri);
+					left += ce.size;
+				}
 			}
 			//renew uriMap
 		}

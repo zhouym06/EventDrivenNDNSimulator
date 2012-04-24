@@ -14,9 +14,12 @@ public class Simulator {
 		Logger.clear();
 		//Logger.log("generate Topology", Logger.INFO);
 		//Topology topo = new Topology("path");
-		Topology topo[] = new Topology[10];
+		
 		//topo[0] = Topology.getDefaultTopology1();
 		int contentNum = 1000;
+		int requestsNum = 20;
+		int topoNum = 99;
+		Topology topo[] = new Topology[topoNum];
 		Statistic.init(contentNum);//contentNum
 		/*
 		for(int i = 0; i < 10; i++)
@@ -33,28 +36,58 @@ public class Simulator {
 			topo[i] = Topology.getLineTopology(routerNum, serverNum, contentNum, cacheSizes);
 			//topo[i].displayTopology();
 		}*/
-		int[][] cacheSizes = new int[10][3];
-		
-		for(int i = 0; i < 3; i++)
+		int[][] cacheSizes = new int[topoNum][3];
+		for(int i = 0; i < topoNum / 3; i++)
 		{
-			cacheSizes[i*3+0][0] = i*1 + 1;
+			cacheSizes[i][0] = 2*i;
+			cacheSizes[i][1] = i;
+			cacheSizes[i][2] = i;
+			
+			cacheSizes[i+topoNum / 3][0] = i;
+			cacheSizes[i+topoNum / 3][1] = 2*i;
+			cacheSizes[i+topoNum / 3][2] = i;
+	
+			cacheSizes[i+topoNum * 2 / 3][0] = i;
+			cacheSizes[i+topoNum * 2 / 3][1] = i;
+			cacheSizes[i+topoNum * 2 / 3][2] = 2*i;
+		}
+		/*
+		for(int i = 0; i < topoNum / 3; i++)
+		{
+			cacheSizes[i*3+0][0] = i;
 			cacheSizes[i*3+0][1] = 0;
 			cacheSizes[i*3+0][2] = 0;
 			
 			cacheSizes[i*3+1][0] = 0;
-			cacheSizes[i*3+1][1] = i*1 + 1;
+			cacheSizes[i*3+1][1] = i;
 			cacheSizes[i*3+1][2] = 0;
 	
 			cacheSizes[i*3+2][0] = 0;
 			cacheSizes[i*3+2][1] = 0;
-			cacheSizes[i*3+2][2] = i*1 + 1;
+			cacheSizes[i*3+2][2] = i;
+		}
+		*/
+		/*
+		for(int i = 0; i < 3; i++)
+		{
+			cacheSizes[i*3+0][0] = i*3;
+			cacheSizes[i*3+0][1] = i*3;
+			cacheSizes[i*3+0][2] = i*3;
+			
+			cacheSizes[i*3+1][0] = i*3+1;
+			cacheSizes[i*3+1][1] = i*3+1;
+			cacheSizes[i*3+1][2] = i*3+1;
+	
+			cacheSizes[i*3+2][0] = i*3+2;
+			cacheSizes[i*3+2][1] = i*3+2;
+			cacheSizes[i*3+2][2] = i*3+2;
 		}
 		cacheSizes[9][0] = 50;
 		cacheSizes[9][1] = 50;
 		cacheSizes[9][2] = 50;
 		
-		
-		for(int i = 0; i < 10; i++)
+		*/
+		for(int i = 0; i < topoNum; i++)
 		{
 			Logger.setFile(String.valueOf(i) + ".txt");
 			int serverNum = 1;
@@ -63,13 +96,13 @@ public class Simulator {
 
 			topo[i] = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, cacheSizes[i]);
 			//topo[i] = Topology.getLineTopology(routerNum, serverNum, contentNum, cacheSizes);
+			//topo[i] = Topology.getDefaultTopology1(contentNum);
 			//topo[i].displayTopology();
 		}
-
 		
 		
 		Logger.log("generate Requests", Logger.INFO);
-		int requestsNum = 20;
+		
 		Requests r[] = new Requests[requestsNum];
 		int requestNum = 2000;
 		int totalRequestTime = 2000;
@@ -92,12 +125,12 @@ public class Simulator {
 		}
 		*/
 		//init TimeLine
-		int[][] totalReq = new int [10][requestsNum];
-		int[][] totalHit = new int [10][requestsNum];
-		int[][] totalMiss = new int [10][requestsNum];
-		int[][] totalNetworkLoad = new int [10][requestsNum];
-		int[][] totalServerLoad = new int [10][requestsNum];
-		for(int i = 0; i < 10; i++)
+		int[][] totalReq = new int [topoNum][requestsNum];
+		int[][] totalHit = new int [topoNum][requestsNum];
+		int[][] totalMiss = new int [topoNum][requestsNum];
+		int[][] totalNetworkLoad = new int [topoNum][requestsNum];
+		int[][] totalServerLoad = new int [topoNum][requestsNum];
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
@@ -118,7 +151,7 @@ public class Simulator {
 			
 		}
 		System.out.println("reqs.size");
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
@@ -129,7 +162,7 @@ public class Simulator {
 		}
 		/*
 		System.out.println("totalRequest");
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
@@ -139,7 +172,7 @@ public class Simulator {
 			System.out.println();
 		}*/
 		System.out.println("ServerLoads");
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
@@ -149,7 +182,7 @@ public class Simulator {
 			System.out.println();
 		}
 		System.out.println("totalCacheHit");
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
@@ -159,7 +192,7 @@ public class Simulator {
 			System.out.println();
 		}
 		System.out.println("totalMiss");
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
@@ -169,7 +202,7 @@ public class Simulator {
 			System.out.println();
 		}
 		System.out.println("NetworkLoads");
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < topoNum; i++)
 		{
 			for(int j = 0; j < requestsNum; j++)
 			{
