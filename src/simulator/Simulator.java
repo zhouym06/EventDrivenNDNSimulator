@@ -37,6 +37,7 @@ public class Simulator {
 			//topo[i].displayTopology();
 		}*/
 		int[][] cacheSizes = new int[topoNum][3];
+		/*
 		for(int i = 0; i < topoNum / 3; i++)
 		{
 			cacheSizes[i][0] = 2*i;
@@ -50,8 +51,8 @@ public class Simulator {
 			cacheSizes[i+topoNum * 2 / 3][0] = i;
 			cacheSizes[i+topoNum * 2 / 3][1] = i;
 			cacheSizes[i+topoNum * 2 / 3][2] = 2*i;
-		}
-		/*
+		}*/
+		/**/
 		for(int i = 0; i < topoNum / 3; i++)
 		{
 			cacheSizes[i*3+0][0] = i;
@@ -66,27 +67,7 @@ public class Simulator {
 			cacheSizes[i*3+2][1] = 0;
 			cacheSizes[i*3+2][2] = i;
 		}
-		*/
-		/*
-		for(int i = 0; i < 3; i++)
-		{
-			cacheSizes[i*3+0][0] = i*3;
-			cacheSizes[i*3+0][1] = i*3;
-			cacheSizes[i*3+0][2] = i*3;
-			
-			cacheSizes[i*3+1][0] = i*3+1;
-			cacheSizes[i*3+1][1] = i*3+1;
-			cacheSizes[i*3+1][2] = i*3+1;
-	
-			cacheSizes[i*3+2][0] = i*3+2;
-			cacheSizes[i*3+2][1] = i*3+2;
-			cacheSizes[i*3+2][2] = i*3+2;
-		}
-		cacheSizes[9][0] = 50;
-		cacheSizes[9][1] = 50;
-		cacheSizes[9][2] = 50;
 		
-		*/
 		for(int i = 0; i < topoNum; i++)
 		{
 			Logger.setFile(String.valueOf(i) + ".txt");

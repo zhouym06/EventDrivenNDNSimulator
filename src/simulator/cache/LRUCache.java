@@ -32,7 +32,7 @@ public class LRUCache extends Cache {
 		}
 		else
 		{
-			//if(cp.timeLived % 2 == 1)
+			if(cp.timeLived % 2 == 1)
 			{
 				Logger.log("Renew Cache missed" + cp.contentName, Logger.VERY_DETAIL);
 				uriMap.put(cp.contentName, cp.size);

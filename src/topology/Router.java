@@ -83,6 +83,7 @@ public class Router {
 		ArrayList<Router> rts = pit.handle(cTask.cPacket);
 		for(Router r:rts)
 		{
+			Statistic.addTTL(URI.getContentNo(cTask.cPacket.contentName), 1);
 			Logger.log("Router" + routerID + ":handleContent(" + cTask.cPacket.contentName+ ")" + " ttl = " + cTask.cPacket.timeLived + " from this router" + this.routerID + "to router" + r.routerID, Logger.ROUTER);
 			ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime() + pit.getFowardTime());
 			//ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime());
