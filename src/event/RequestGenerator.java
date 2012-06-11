@@ -60,7 +60,7 @@ public class RequestGenerator {
 		// TODO: also for servers
 		for (int i = 0; i < requestNum; i++) {
 			cNo = (int) Math.floor(getContentNo(MyRandom.nextDouble()));
-			Statistic.countRequest(cNo);
+			//Statistic.countRequest(cNo);
 			// 10 request is generated each second?
 			time += MyRandom.nextPoisson(1) / 10; 
 			r.add(new Request(cNo, time));
@@ -85,7 +85,7 @@ public class RequestGenerator {
 			while (time < lastTime && requestCount < requestNum) {
 				// Hit of contentNo is distributed by power law in each server
 				contentNo = (int) Math.floor(getContentNo(MyRandom.nextDouble()));
-				Statistic.countRequest(contentNo);
+				//Statistic.countRequest(contentNo);
 				// 10 request is generated each second when on?
 				time += MyRandom.nextPoisson(1) / 10;
 				r.add(new Request(contentNo,time));

@@ -46,7 +46,7 @@ public class PIT {
 	{
 		Logger.log("PIT:handleContent " + cPacket.contentName, Logger.ROUTER - 1);
 		String prefix = URI.getContentPrefix(cPacket.contentName);
-		ArrayList<Router> pendingRouters = pendingInterest.get(prefix);
+		ArrayList<Router> pendingRouters = pendingInterest.remove(prefix);//.get(prefix);
 		if(pendingRouters == null)
 		{
 			Logger.log("!!!PIT:handleContent(): we don't have " + prefix + " in PIT", Logger.ERROR);
@@ -54,8 +54,6 @@ public class PIT {
 			return null;
 		}
 		return pendingRouters;
-
-		
 	}
 	public double getFowardTime()
 	{  				

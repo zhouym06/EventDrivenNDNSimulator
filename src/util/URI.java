@@ -16,7 +16,7 @@ public class URI {
 		}
 		else
 		{
-			Logger.log("!!!PIT:handleContent(): contentName fomat error", Logger.ERROR);
+			Logger.log("URI:ContentName fomat error", Logger.ERROR);
 			return -1;
 		}
 	}
@@ -33,7 +33,7 @@ public class URI {
 		}
 		else
 		{
-			Logger.log("!!!PIT:handleContent(): contentName fomat error", Logger.ERROR);
+			Logger.log("URI:ContentName fomat error", Logger.ERROR);
 			return null;
 		}
 	}

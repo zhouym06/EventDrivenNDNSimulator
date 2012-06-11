@@ -31,6 +31,7 @@ public class Logger {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public static void log(PrintStream out, String s, int level)
@@ -43,6 +44,8 @@ public class Logger {
 		for(int i = VERY_DETAIL; level + i < DEBUG; i++)
 			out.print("\t");
 		out.println(s);
+		if(level >= INFO)
+			System.out.println(s);
 	}
 	public static void clear()
 	{

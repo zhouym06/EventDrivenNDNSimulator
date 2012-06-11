@@ -13,6 +13,26 @@ public class Tree {
 		}
 		return level;
 	}
+	public static int getTreeNodeNum(int treeDegree,int treeLevel)
+	{
+		int sum = 0;
+		int levelNum = 1;
+		for(int i = 0; i < treeLevel;i++)
+		{
+			sum += levelNum;
+			levelNum *= treeDegree;
+		}
+		return sum;
+	}
+	public static int getTreeLevelSize(int treeDegree,int treeLevel)
+	{
+		int levelSize = 1;
+		for(int i = 0; i < treeLevel - 1;i++)
+		{
+			levelSize *= treeDegree;
+		}
+		return levelSize;
+	}
 	public static int getParent(int treeDegree,int treeLevel, int routerID)
 	{
 		int parent = (int)Math.floor((routerID - 0.1)/treeDegree);

@@ -3,6 +3,9 @@ package simulator.cache;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map.Entry;
+
+import logger.Logger;
 
 import simulator.packet.ContentPacket;
 import simulator.packet.InterestPacket;
@@ -26,9 +29,21 @@ public abstract class Cache {
 		int size = uriMap.get(ContentName);
 		return new ContentPacket(ContentName, size);
 	}
-	public abstract boolean add(ContentPacket cp);
+	public abstract boolean handle(ContentPacket cp);
 
-	public void handle(ContentPacket cPacket) {
-		add(cPacket);
+	public void display() {
+		Logger.log("Left:" + left + ":", Logger.INFO);
+		/*
+		Logger.log("uriMap:", Logger.INFO);
+		for(Entry<String, Integer> e:uriMap.entrySet())
+		{
+			Logger.log("Entry:" + e.getKey() + ":" + e.getValue(), Logger.INFO);
+		}
+		*/
+		Logger.log("CacheElement in order:", Logger.INFO);
+		for(CacheElement ce:cache)
+		{
+			Logger.log("" + ce.uri+ ":" + ce.size, Logger.INFO);
+		}
 	}
 }

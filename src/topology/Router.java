@@ -32,13 +32,15 @@ public class Router {
 		this.routerID = routerID;
 		pit = new PIT();
 		fib = new FIB();
-		this.cache = new LRUCache(cacheSize);
-		this.interfaces = new ArrayList<Edge>();
+		cache = new LRUCache(cacheSize);
+		interfaces = new ArrayList<Edge>();
 	}
 	public void handle(InterestTask iTask, Router from)	
 	{
 		Logger.log("Router" + routerID + ":handleInterest(" + iTask.iPacket.contentName+ ") from router" + from.routerID + "at router" + this.routerID, Logger.ROUTER);
 		iTask.iPacket.timeLived++;
+		
+		Statistic.countLeveledRequest(URI.getContentNo(iTask.iPacket.contentName), routerID);
 		if(cache.contains(iTask.iPacket.contentName))
 		{
 			Statistic.countHit(URI.getContentNo(iTask.iPacket.contentName));
@@ -46,15 +48,21 @@ public class Router {
 			TimeLine.add(ct);
 			return;
 		}
-
+		
 		Statistic.countMiss(URI.getContentNo(iTask.iPacket.contentName));
+		
+		
 		if(pit.addPI(iTask.iPacket, from))
 		{
 			int i = fib.getNextInterface(iTask.iPacket.contentName);
 			double time = iTask.getTime() + fib.getLookupTime();
 			//double time = iTask.getTime();
 			TimeLine.add(new InterestTask(iTask.iPacket.contentName, interfaces.get(i).theOther(this),  this, time));
+			
+			//System.out.println("router" + routerID + "pit.addPI " + iTask.iPacket.contentName);
+			return;
 		}
+		//System.out.println("router" + routerID + "pit already have PI " + iTask.iPacket.contentName);
 	}
 	public void handle(AnnoucePacket aPacket, Edge fromInterface, double time)	
 	{
@@ -74,16 +82,16 @@ public class Router {
 		}
 		Logger.log("Router:handleAnnouce fin", Logger.ROUTER);
 	}
-	//≤ª∑÷segment¡À
+	
 	public void handle(ContentTask cTask)
 	{
 		Logger.log("Router" + routerID + ":handleContent " + cTask.cPacket.contentName, Logger.ROUTER);
-		//cTask.cPacket.timeLived = cTask.cPacket.timeLived++;		// why doesn't this work?
-		cache.handle(cTask.cPacket);	// renew cache
+		//cTask.cPacket.timeLived = cTask.cPacket.timeLived++;
+		cache.handle(cTask.cPacket);// renew cache
 		ArrayList<Router> rts = pit.handle(cTask.cPacket);
+		Statistic.addNetworkLoad(URI.getContentNo(cTask.cPacket.contentName), 1);
 		for(Router r:rts)
-		{
-			Statistic.addTTL(URI.getContentNo(cTask.cPacket.contentName), 1);
+		{	
 			Logger.log("Router" + routerID + ":handleContent(" + cTask.cPacket.contentName+ ")" + " ttl = " + cTask.cPacket.timeLived + " from this router" + this.routerID + "to router" + r.routerID, Logger.ROUTER);
 			ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime() + pit.getFowardTime());
 			//ContentTask ct = new ContentTask(new ContentPacket(cTask.cPacket), r, cTask.getTime());
@@ -92,10 +100,16 @@ public class Router {
 		
 	}
 	public void displayFIB() {
-		Logger.log("FIBEntry of " + routerID + ":", Logger.DEBUG);
+		Logger.log("FIBEntry of " + routerID + ":", Logger.INFO);
 		fib.display();
 		int i = fib.getNextInterface("Server0");
-		Logger.log("\tinterfaces" + i + "routerID" + interfaces.get(i).theOther(this).routerID, Logger.DEBUG);
+		Logger.log("\tinterfaces" + i + "routerID" + interfaces.get(i).theOther(this).routerID, Logger.INFO);
+	}
+	public void displayCache() {
+		Logger.log("Cache of " + routerID + ":", Logger.INFO);
+		cache.display();
+		
+		
 	}
 	public void display() {
 		Logger.log("Router" + routerID + ":" + " has " + interfaces.size() + " edges", Logger.INFO);
@@ -108,4 +122,5 @@ public class Router {
 	{
 		return "Router" + routerID + ":";
 	}
+	
 }

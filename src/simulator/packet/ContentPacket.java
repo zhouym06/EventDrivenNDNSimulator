@@ -7,8 +7,10 @@ public class ContentPacket extends Packet{
 		super(contentName);
 		this.size = size;
 	}
+	/**/
 	public ContentPacket(ContentPacket cPacket)
 	{
 		super(cPacket);
+		this.size = cPacket.size;
 	}
 }
