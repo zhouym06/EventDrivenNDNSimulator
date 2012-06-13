@@ -69,7 +69,7 @@ public class TimeLine {
 	}
 	public static void execute()
 	{
-		Logger.log("TimeLine:" + "execute(" + tasks.size() + ")", Logger.INFO);
+		//Logger.log("TimeLine:" + "execute(" + tasks.size() + ")", Logger.INFO);
 		int count = 0;
 		while(tasks.size() > 0)
 		{
@@ -80,7 +80,7 @@ public class TimeLine {
 			if(count % 100 == 0)
 				Logger.log(count + "tasks have been executed£¬ now remain" + tasks.size(), Logger.DEBUG);
 		}
-		Logger.log(count + "tasks have been executed£¬", Logger.INFO);
+		//Logger.log("TimeLine:" + count + "tasks have been executed£¬", Logger.INFO);
 	}
 	public static void display()
 	{

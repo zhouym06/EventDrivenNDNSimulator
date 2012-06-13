@@ -51,10 +51,11 @@ public class Statistic {
 		totalNetworkLoad = 0;
 		totalServerLoad = 0;
 		cacheHitCount = new int [contentNum];
-		//Arrays.fill(cacheHitCount, 0);
+		Arrays.fill(cacheHitCount, 0);
 		cacheMissCount = new int [contentNum];
 		requestCount = new int [contentNum];
 		networkLoad = new int [contentNum];
+		Arrays.fill(networkLoad, 0);
 		serverLoad = new int [contentNum];
 		contentLeveledReq = new int [routerNum][contentNum];
 	}

@@ -1,6 +1,9 @@
 package treeOpt;
 
 public class LoadModel {
+	static int dimesion;
+	static int height;
+	static int contentNum;
 	static double p[][];
 	public static void initP(int n)
 	{
@@ -15,37 +18,25 @@ public class LoadModel {
 			p[0][i] = 1 / ((double) (i + 1)  * H);
 		}
 	}
-	public static double getLoad(int d, int h, int c, int n, int[] cacheSize){
-		p = new double[h][n];
+	public static void init(int d, int h, int c)
+	{
+		dimesion = d;
+		height = h;
+		contentNum = c;
+		p = new double[height][contentNum];
+		initP(contentNum);
+	}
+	public static double getLoad(int[] cacheSize){
 		double load = 0;
-		initP(n);
-		for(int i = 1; i < h; i++)
+		for(int i = 1; i < height; i++)
 		{
-			for(int j = 0; j < n; j++)
+			for(int j = 0; j < contentNum; j++)
 			{
-				p[i][j] = p[i-1][j] * Math.pow(1 - p[i-1][j], (double)cacheSize[h - i] / (double)getCacheNum(d, h - i));
+				p[i][j] = p[i-1][j] * Math.pow(1 - p[i-1][j], (double)cacheSize[height - i] / (double)getCacheNum(dimesion, height - i));
 				//p0不加，加不加反正都是1，从client到底层router不算，从顶层router到server也不算
 				load += p[i][j];
 			}
 		}
-		//p0不加，加不加反正都是1，从client到底层router不算，从顶层router到server也不算
-		/*
-		for(int i = 1; i < h; i++)
-		{
-			for(int j = 0; j < n; j++)
-			{
-				load += p[i][j];
-			}
-		}*/
-		/*
-		System.out.println(d + "," + h + "," + c + "," + n);
-		for(int i = 1; i < h; i++)
-		{
-			System.out.print(cacheSize[i] + "\t");
-		}
-		System.out.println();
-		System.out.println("load:" + load);
-		*/
 		return load;
 	}
 	private static int getCacheNum(int d, int h) {

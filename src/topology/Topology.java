@@ -165,8 +165,8 @@ public class Topology {
 	
 	//cacheSizes' size should be treeLevel	
 	public static Topology getTreeTopology(int treeLevel, int treeDegree, int serverNum, int contentNum, int[] cacheSizes) {
-		Logger.log("Topology:" + "getTreeTopology(" + 
-					treeLevel + "," + treeDegree + "," + serverNum + "," + contentNum + "," + Tree.getTreeNodeNum(treeDegree, treeLevel) + ")", Logger.INFO);
+		//Logger.log("Topology:" + "getTreeTopology(" + 
+		//			treeLevel + "," + treeDegree + "," + serverNum + "," + contentNum + "," + Tree.getTreeNodeNum(treeDegree, treeLevel) + ")", Logger.INFO);
 		Topology topo = new Topology();
 		int routerNum = 1;
 		int levelNum = 1;
@@ -245,9 +245,9 @@ public class Topology {
 			topo.routers[routerNum - i - 1].interfaces.add(e);
 			topo.sinks[i].interfaces.add(e);
 		}
-		Logger.log("getTreeTopology:" + "issueContentOnServer()", Logger.INFO);
+		//Logger.log("getTreeTopology:" + "issueContentOnServer()", Logger.INFO);
 		topo.issueContentOnServer();
-		Logger.log("getTreeTopology:" + "announce()", Logger.INFO);
+		//Logger.log("getTreeTopology:" + "announce()", Logger.INFO);
 		topo.announce();
 		return topo;
 	}

@@ -5,7 +5,6 @@ public class HillOptimiser extends Optimiser {
 	public HillOptimiser(int d, int h, int c, int n) {
 		super(d, h, c, n);
 	}
-
 	public int[] optimise() {
 		int cacheSizes[] = new int[height];
 		cacheSizes[0] = totalCacheSize;
@@ -22,13 +21,21 @@ public class HillOptimiser extends Optimiser {
 				sum += random;
 			}
 		}
+		return optimise(cacheSizes);
+	}
+	public int[] optimise(int cacheSizes[], int seedNum) {
 		
+		return cacheSizes;
+		
+	}
+	public int[] optimise(int cacheSizes[]) {
 		for (int i = 0; i < height; i++) {
 			System.out.print(cacheSizes[i] + "\t");
 		}
-		System.out.println(sum);
-		double currentLoad = LoadModel.getLoad(dimesion, height,
-				totalCacheSize, contentNum, cacheSizes);
+		System.out.println();
+		
+		LoadModel.init(dimesion, height, contentNum);
+		double currentLoad = LoadModel.getLoad(cacheSizes);
 
 		boolean goOnflag = true;
 		int count = 0;
@@ -50,8 +57,7 @@ public class HillOptimiser extends Optimiser {
 					}
 					testNeighborCaches[i] = cacheSizes[i] - 1;
 					testNeighborCaches[j] = cacheSizes[j] + 1;
-					testLoad = LoadModel.getLoad(dimesion, height,
-							totalCacheSize, contentNum, testNeighborCaches);
+					testLoad = LoadModel.getLoad(testNeighborCaches);
 					//System.out.println(i + "," + j + ":" + testLoad + "," + currentLoad);
 					if (testLoad < minNeighborLoad) {
 						minNeighborLoad = testLoad;
@@ -63,7 +69,11 @@ public class HillOptimiser extends Optimiser {
 				}
 			}
 			if (minNeighborLoad < currentLoad) {
-				System.out.println(minNeighborLoad + "," + currentLoad);
+				//if(count % 10 == 0)
+				{
+					//System.out.println(minNeighborLoad + "," + currentLoad);
+				}
+				
 				currentLoad = minNeighborLoad;
 				for (int t = 0; t < height; t++) {
 					cacheSizes[t] = minNeighborCaches[t];
@@ -72,7 +82,7 @@ public class HillOptimiser extends Optimiser {
 			}
 			if(count % 50 == 0)
 			{
-				
+				//System.out.println(count);
 			}
 		}
 		return cacheSizes;

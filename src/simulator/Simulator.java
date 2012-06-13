@@ -15,7 +15,8 @@ public class Simulator {
 		//getDistributeByLevelInLine();
 		//getDistributeByLevelInTree();
 		//getOptInTree();
-		proveHillDiff();
+		//proveHillGADiff();
+		proveHillGADiff2();
 		//showReplaceDiff();
 		//get1();
 		/*
@@ -237,8 +238,89 @@ public class Simulator {
 		}
 		
 	}
-	private static void proveHillDiff() {
+private static void proveHillGADiff() {
 		
+		int contentNum = 10000;
+		
+		int treeLevel = 5;
+		int serverNum = 1;
+		int requestsNum = 1;
+		int requestNum = 10000;		
+		int totalRequestTime = 20000;
+		int totalNetworkLoad[] = new int [treeLevel];
+		
+		
+		int totalCache[] = new int[4];
+		totalCache[0] = 800;
+		totalCache[1] = 800;
+		totalCache[2] = 2000;
+		totalCache[3] = 2000;
+		
+		
+		int degrees[] = new int[4];
+		degrees[0] = 5;
+		degrees[1] = 2;
+		degrees[2] = 5;
+		degrees[3] = 2;
+				
+				
+		int hillCacheSizes[][] = new int[4][5];
+		//0
+		hillCacheSizes[0][1] = (int) Math.ceil(( (double)403 / Tree.getTreeLevelSize(degrees[0], 1)));
+		hillCacheSizes[0][2] = (int) Math.ceil(( (double)397 / Tree.getTreeLevelSize(degrees[0], 2)));
+		//1
+		hillCacheSizes[1][2] = (int) Math.ceil(( (double)192 / Tree.getTreeLevelSize(degrees[1], 2)));
+		hillCacheSizes[1][4] = (int) Math.ceil(( (double)608 / Tree.getTreeLevelSize(degrees[1], 4)));
+		//2
+		hillCacheSizes[2][1] = (int) Math.ceil(( (double)820 / Tree.getTreeLevelSize(degrees[2], 1)));
+		hillCacheSizes[2][2] = (int) Math.ceil(( (double)894 / Tree.getTreeLevelSize(degrees[2], 2)));
+		hillCacheSizes[2][3] = (int) Math.ceil(( (double)286 / Tree.getTreeLevelSize(degrees[2], 3)));
+		//3
+		hillCacheSizes[3][2] = (int) Math.ceil(( (double)550 / Tree.getTreeLevelSize(degrees[3], 2)));
+		hillCacheSizes[3][4] = (int) Math.ceil(( (double)1450 / Tree.getTreeLevelSize(degrees[3], 4)));
+		
+		
+		
+		
+		
+		int GACacheSizes[][] = new int[4][5];
+		//0
+		GACacheSizes[0][0] = (int) Math.ceil(( (double)3 / Tree.getTreeLevelSize(degrees[0], 0)));
+		GACacheSizes[0][1] = (int) Math.ceil(( (double)394 / Tree.getTreeLevelSize(degrees[0], 1)));
+		GACacheSizes[0][2] = (int) Math.ceil(( (double)1 / Tree.getTreeLevelSize(degrees[0], 2)));
+		GACacheSizes[0][3] = (int) Math.ceil(( (double)401 / Tree.getTreeLevelSize(degrees[0], 3)));
+		GACacheSizes[0][4] = (int) Math.ceil(( (double)1 / Tree.getTreeLevelSize(degrees[0], 4)));
+		
+		//1
+		GACacheSizes[1][0] = (int) Math.ceil(( (double)196 / Tree.getTreeLevelSize(degrees[1], 0)));
+		GACacheSizes[1][1] = (int) Math.ceil(( (double)4 / Tree.getTreeLevelSize(degrees[1], 1)));
+		GACacheSizes[1][2] = (int) Math.ceil(( (double)3 / Tree.getTreeLevelSize(degrees[1], 2)));
+		GACacheSizes[1][3] = (int) Math.ceil(( (double)595 / Tree.getTreeLevelSize(degrees[1], 3)));
+		GACacheSizes[1][4] = (int) Math.ceil(( (double)2 / Tree.getTreeLevelSize(degrees[1], 4)));
+		
+		//2
+		GACacheSizes[2][0] = (int) Math.ceil(( (double)933 / Tree.getTreeLevelSize(degrees[2], 0)));
+		GACacheSizes[2][1] = (int) Math.ceil(( (double)757 / Tree.getTreeLevelSize(degrees[2], 1)));
+		GACacheSizes[2][2] = (int) Math.ceil(( (double)1 / Tree.getTreeLevelSize(degrees[2], 2)));
+		GACacheSizes[2][3] = (int) Math.ceil(( (double)308 / Tree.getTreeLevelSize(degrees[2], 3)));
+		GACacheSizes[2][4] = (int) Math.ceil(( (double)1 / Tree.getTreeLevelSize(degrees[2], 4)));
+
+		//3
+		GACacheSizes[3][0] = (int) Math.ceil(( (double)0 / Tree.getTreeLevelSize(degrees[3], 0)));
+		GACacheSizes[3][1] = (int) Math.ceil(( (double)0 / Tree.getTreeLevelSize(degrees[3], 1)));
+		GACacheSizes[3][2] = (int) Math.ceil(( (double)0 / Tree.getTreeLevelSize(degrees[3], 2)));
+		GACacheSizes[3][3] = (int) Math.ceil(( (double)1514 / Tree.getTreeLevelSize(degrees[3], 3)));
+		GACacheSizes[3][4] = (int) Math.ceil(( (double)486 / Tree.getTreeLevelSize(degrees[3], 4)));
+		
+		Logger.log("Generating Requests", Logger.INFO);
+		Requests r[] = new Requests[requestsNum];
+		for(int i = 0; i < requestsNum; i++)
+		{
+			r[i] = RequestGenerator.getPoissonRequests(requestNum, contentNum, totalRequestTime);
+			//r[i] = RequestGenerator.genOnOffRequests(requestNum, contentNum, totalRequestTime);
+		}
+		
+		//int hillNo = 3;
 		for(int hillNo = 0; hillNo < 4; hillNo++)
 		{
 			System.out.println();
@@ -247,31 +329,12 @@ public class Simulator {
 			System.out.println(hillNo);
 			System.out.println();
 			
-			int totalCache[] = new int[4];
-			totalCache[0] = 800;
-			totalCache[1] = 800;
-			totalCache[2] = 2000;
-			totalCache[3] = 2000;
-			
-			int degrees[] = new int[4];
-			degrees[0] = 5;
-			degrees[1] = 2;
-			degrees[2] = 5;
-			degrees[3] = 2;
 			int treeDegree = degrees[hillNo];
-			int contentNum = 10000;
-			
-			int treeLevel = 5;
-			int serverNum = 1;
-			int requestsNum = 1;
-			int requestNum = 10000;		
-			int totalRequestTime = 20000;
-			int totalNetworkLoad[] = new int [treeLevel];
 			
 			
 			int routerNum = Tree.getTreeNodeNum(treeDegree, treeLevel);
 			//serverNum = 20;
-			System.out.println("routerNum: " + routerNum + "\tfor treeDegree:" + treeDegree);
+			//System.out.println("routerNum: " + routerNum + "\tfor treeDegree:" + treeDegree);
 			Statistic.init(contentNum, routerNum);//contentNum
 			for(int m = 0; m < treeLevel; m++)
 			{
@@ -284,13 +347,7 @@ public class Simulator {
 				System.out.println("cacheSizes[" + m + "]:" + cacheSizes[m]);
 				Logger.setFile("topo" + 0 + "-cacheAt" + m + ".txt");
 				Topology topo = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, cacheSizes);
-				Logger.log("Generating Requests", Logger.INFO);
-				Requests r[] = new Requests[requestsNum];
-				for(int i = 0; i < requestsNum; i++)
-				{
-					r[i] = RequestGenerator.getPoissonRequests(requestNum, contentNum, totalRequestTime);
-					//r[i] = RequestGenerator.genOnOffRequests(requestNum, contentNum, totalRequestTime);
-				}
+				
 				for(int i = 0; i < requestsNum; i++)
 				{
 					TimeLine.clear();
@@ -319,42 +376,41 @@ public class Simulator {
 			
 			
 			Statistic.init(contentNum, routerNum);//contentNum
-			int hillCacheSizes[][] = new int[4][treeLevel];
-			
-			//0
-			hillCacheSizes[0][1] = (int) Math.ceil(( (double)403 / Tree.getTreeLevelSize(treeDegree, 1)));
-			hillCacheSizes[0][2] = (int) Math.ceil(( (double)397 / Tree.getTreeLevelSize(treeDegree, 2)));
-			//1
-			hillCacheSizes[1][2] = (int) Math.ceil(( (double)192 / Tree.getTreeLevelSize(treeDegree, 2)));
-			hillCacheSizes[1][4] = (int) Math.ceil(( (double)608 / Tree.getTreeLevelSize(treeDegree, 4)));
-			//2
-			hillCacheSizes[2][1] = (int) Math.ceil(( (double)820 / Tree.getTreeLevelSize(treeDegree, 1)));
-			hillCacheSizes[2][2] = (int) Math.ceil(( (double)894 / Tree.getTreeLevelSize(treeDegree, 2)));
-			hillCacheSizes[2][3] = (int) Math.ceil(( (double)286 / Tree.getTreeLevelSize(treeDegree, 3)));
-			//3
-			hillCacheSizes[3][2] = (int) Math.ceil(( (double)550 / Tree.getTreeLevelSize(treeDegree, 2)));
-			hillCacheSizes[3][4] = (int) Math.ceil(( (double)1450 / Tree.getTreeLevelSize(treeDegree, 4)));
-			
-			
-			
 			Logger.setFile("hill" + hillNo + "" + ".txt");
 			Topology topo = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, hillCacheSizes[hillNo]);
 			Logger.log("Generating Requests", Logger.INFO);
-			Requests r[] = new Requests[requestsNum];
-			for(int i = 0; i < requestsNum; i++)
-			{
-				r[i] = RequestGenerator.getPoissonRequests(requestNum, contentNum, totalRequestTime);
-				//r[i] = RequestGenerator.genOnOffRequests(requestNum, contentNum, totalRequestTime);
-			}
+			
+			
 			for(int i = 0; i < requestsNum; i++)
 			{
 				TimeLine.clear();
 				Statistic.init(contentNum, routerNum);
 				topo.setTimeLine(r[i]);			//init TimeLine
 				TimeLine.execute();
-				Statistic.display();
+				//Statistic.display();
 				int load = Statistic.totalNetworkLoad;
-				Logger.log("Load:" + load, Logger.INFO);
+				Logger.log("HillLoad:" + load, Logger.INFO);
+			}
+			System.out.println();
+			System.out.println();
+			
+			
+			
+			
+			Statistic.init(contentNum, routerNum);//contentNum
+			Logger.setFile("GA" + hillNo + "" + ".txt");
+			topo = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, GACacheSizes[hillNo]);
+			Logger.log("Generating Requests", Logger.INFO);
+			
+			for(int i = 0; i < requestsNum; i++)
+			{
+				TimeLine.clear();
+				Statistic.init(contentNum, routerNum);
+				topo.setTimeLine(r[i]);			//init TimeLine
+				TimeLine.execute();
+				//Statistic.display();
+				int load = Statistic.totalNetworkLoad;
+				Logger.log("GALoad:" + load, Logger.INFO);
 			}
 			System.out.println();
 			System.out.println();
@@ -362,6 +418,183 @@ public class Simulator {
 		
 		
 	}
+private static void proveHillGADiff2() {
+	int topoNum = 4;
+	
+	int contentNum = 10000;
+	int treeLevel = 5;
+	int serverNum = 1;
+	int requestsNum = 1;
+	int requestNum = 10000;		
+	int totalRequestTime = 20000;
+	int totalNetworkLoad[] = new int [treeLevel];
+	
+	
+
+	
+	
+	int degrees[] = new int[topoNum];
+	degrees[0] = 5;
+	degrees[1] = 2;
+	degrees[2] = 5;
+	degrees[3] = 2;
+			
+			
+	int methodologyNum = 3;
+	int testCacheSizes[][][] = new int[methodologyNum][topoNum][treeLevel];
+	
+	
+	int totalCache[] = new int[topoNum];
+	totalCache[0] = 800;
+	totalCache[1] = 800;
+	totalCache[2] = 2000;
+	totalCache[3] = 2000;
+	
+	//hill
+	testCacheSizes[0][0][1] = 403;
+	testCacheSizes[0][0][2] = 397;
+	testCacheSizes[0][1][2] = 192;
+	testCacheSizes[0][1][4] = 608;
+	testCacheSizes[0][2][1] = 820;
+	testCacheSizes[0][2][2] = 894;
+	testCacheSizes[0][2][3] = 286;
+	testCacheSizes[0][3][2] = 550;
+	testCacheSizes[0][3][4] = 1450;
+		//GA+hill
+	testCacheSizes[1][0][1] = 403;
+	testCacheSizes[1][0][2] = 397;
+	testCacheSizes[1][1][2] = 192;
+	testCacheSizes[1][1][4] = 608;
+	testCacheSizes[1][2][1] = 820;
+	testCacheSizes[1][2][2] = 894;
+	testCacheSizes[1][2][3] = 286;
+	testCacheSizes[1][3][4] = 2000;
+		//An+hill
+	testCacheSizes[2][0][1] = 403;
+	testCacheSizes[2][0][2] = 397;
+	testCacheSizes[2][1][2] = 192;
+	testCacheSizes[2][1][4] = 608;
+	testCacheSizes[2][2][1] = 820;
+	testCacheSizes[2][2][2] = 894;
+	testCacheSizes[2][2][3] = 286;
+	testCacheSizes[2][3][2] = 550;
+	testCacheSizes[2][3][4] = 1450;
+	/*
+	
+	int totalCache[] = new int[topoNum];
+	totalCache[0] = 80;
+	totalCache[1] = 80;
+	totalCache[2] = 200;
+	totalCache[3] = 200;
+	
+	//hill
+	testCacheSizes[0][0][1] = 80;
+	testCacheSizes[0][1][2] = 72;
+	testCacheSizes[0][1][4] = 8;
+	testCacheSizes[0][2][1] = 139;
+	testCacheSizes[0][2][2] = 61;
+	testCacheSizes[0][3][2] = 108;
+	testCacheSizes[0][3][4] = 92;
+	//GA+hill
+	testCacheSizes[1][0][1] = 80;
+	testCacheSizes[1][1][2] = 72;
+	testCacheSizes[1][1][4] = 8;
+	testCacheSizes[1][2][1] = 139;
+	testCacheSizes[1][2][2] = 61;
+	testCacheSizes[1][3][3] = 200;
+	//An+hill
+
+	testCacheSizes[2][0][1] = 80;
+	testCacheSizes[2][1][2] = 72;
+	testCacheSizes[2][1][4] = 8;
+	testCacheSizes[2][2][1] = 139;
+	testCacheSizes[2][2][2] = 61;
+	testCacheSizes[2][3][2] = 108;
+	testCacheSizes[2][3][4] = 92;
+	*/
+	Logger.log("Generating Requests", Logger.INFO);
+	Requests r[] = new Requests[requestsNum];
+	for(int i = 0; i < requestsNum; i++)
+	{
+		r[i] = RequestGenerator.getPoissonRequests(requestNum, contentNum, totalRequestTime);
+		//r[i] = RequestGenerator.genOnOffRequests(requestNum, contentNum, totalRequestTime);
+	}
+	
+	//int hillNo = 3;
+	for(int hillNo = 0; hillNo < 4; hillNo++)
+	{
+		System.out.println();
+		System.out.println();
+		System.out.println(hillNo);
+		System.out.println();
+		
+		int treeDegree = degrees[hillNo];
+		
+		
+		int routerNum = Tree.getTreeNodeNum(treeDegree, treeLevel);
+		Statistic.init(contentNum, routerNum);//contentNum
+		for(int m = 0; m < treeLevel; m++)
+		{
+			int cacheSizes[] = new int[treeLevel];
+			for(int i = 0; i < treeLevel; i++)
+			{
+				cacheSizes[i] = 0;
+			}
+			cacheSizes[m] = (int) Math.ceil(( (double)totalCache[hillNo] / Tree.getTreeLevelSize(treeDegree, m)));
+			System.out.println("cacheSizes[" + m + "]:" + cacheSizes[m]);
+			Logger.setFile("topo" + 0 + "-cacheAt" + m + ".txt");
+			Topology topo = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, cacheSizes);
+			
+			for(int i = 0; i < requestsNum; i++)
+			{
+				TimeLine.clear();
+				Statistic.init(contentNum, routerNum);
+				topo.setTimeLine(r[i]);			//init TimeLine
+				TimeLine.execute();
+				//Statistic.display();
+				totalNetworkLoad[m] = Statistic.totalNetworkLoad;
+			}
+		}
+		int minIndex = -1;
+		int minValue = Integer.MAX_VALUE;
+		for(int m = 0; m < treeLevel; m++)
+		{
+			if(totalNetworkLoad[m] < minValue)
+			{
+				minValue = totalNetworkLoad[m];
+				minIndex = m;
+			}
+		}
+		Logger.log("minIndex" + minIndex + "\t Load:" + minValue + "\n", Logger.INFO);
+		
+		
+
+		
+		for(int mNo = 0; mNo < methodologyNum; mNo++)
+		{
+			Statistic.init(contentNum, routerNum);//contentNum
+			Logger.setFile("hill-" + hillNo + "_method-" + mNo + ".txt");
+			Topology topo = Topology.getTreeTopology(treeLevel, treeDegree, serverNum, contentNum, 
+					testCacheSizes[mNo][hillNo]);
+			Logger.log("Generating Requests", Logger.INFO);
+			
+			
+			for(int i = 0; i < requestsNum; i++)
+			{
+				TimeLine.clear();
+				Statistic.init(contentNum, routerNum);
+				topo.setTimeLine(r[i]);			//init TimeLine
+				TimeLine.execute();
+				//Statistic.display();
+				int load = Statistic.totalNetworkLoad;
+				Logger.log("HillLoad:" + hillNo + "\tmethodologyNum:" + mNo + "\tLoad:" + load, Logger.INFO);
+			}
+			System.out.println();
+			System.out.println();
+		}
+		System.out.println();
+	}
+}
 	private static void getOptInTree()
 	{
 		int contentNum = 1000;

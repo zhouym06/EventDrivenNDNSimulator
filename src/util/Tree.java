@@ -27,7 +27,7 @@ public class Tree {
 	public static int getTreeLevelSize(int treeDegree,int treeLevel)
 	{
 		int levelSize = 1;
-		for(int i = 0; i < treeLevel - 1;i++)
+		for(int i = 0; i < treeLevel;i++)
 		{
 			levelSize *= treeDegree;
 		}
