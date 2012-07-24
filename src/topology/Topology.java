@@ -19,7 +19,7 @@ public class Topology {
 	Router[] routers;
 	//// edge.size() may be larger than edgeNum after server and sink is added? == false now
 	int edgeNum;
-	ArrayList<Edge> edges;
+	//ArrayList<Edge> edges;
 	int serverNum;
 	Server[] servers;
 	int sinkNum;
@@ -105,6 +105,162 @@ public class Topology {
 		return topo;
 	}
 
+	public static Topology getSzCampusTopology1(int cNum, int[] cSize) {//cSize: int[34]
+		Logger.log("Topology:" + "getSCampusTopology1()", Logger.INFO);
+		Topology topo = new Topology();
+		topo.routerNum = 34;	//0-33
+		topo.routers = new Router[topo.routerNum];
+		
+		topo.serverNum = 1;
+		topo.servers = new Server[topo.serverNum];
+		
+		topo.contentNum = cNum;
+		topo.serverOfContent = new int[topo.contentNum];
+		
+		
+		topo.sinkNum = 33;	//0-32
+		topo.sinks = new Sink[topo.sinkNum];
+		// routers
+		for (int routerID = 0; routerID < topo.routerNum; routerID++) {
+			topo.routers[routerID] = new Router(routerID, cSize[routerID]);
+		}
+		//sinks
+		for (int i = 0; i < topo.sinkNum; i++) {
+			topo.sinks[i] = new Sink(topo.routers[i+1], -(i+1));
+		}
+		//servers
+		topo.servers[0] = new Server("Server" + String.valueOf(0), -100);// linked to router2
+		
+		// interfaces
+		topo.edgeNum = 61;
+			//server
+		{
+			Edge e = new Edge(topo.routers[0], topo.servers[0], -2, MyRandom.nextDouble());
+			topo.routers[0].interfaces.add(e);
+			topo.servers[0].interfaces.add(e);
+		}
+			//sinks
+		for (int i = 0; i < topo.sinkNum; i++)
+		{
+			Edge e = new Edge(topo.routers[i + 1], topo.sinks[i], -1, MyRandom.nextDouble());
+			topo.routers[i + 1].interfaces.add(e);
+			topo.sinks[i].interfaces.add(e);
+		}
+			//r1
+		{
+			int thisR = 1;
+			int[] thatR = {0,2,9,5,7,8};			//1-6
+			for(int i = 0; i < 6; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+1 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);				
+			}
+		}	
+			//r0
+		{
+			int thisR = 0;
+			int[] thatR = {6,7,8,12,11,3,2,10,9};	//7-15
+			for(int i = 0; i < 9; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+7 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);				
+			}
+		}	
+			//r2
+		{
+			int thisR = 2;
+			int[] thatR = {28,29,30,31,32,33,3};	//16-22
+			for(int i = 0; i < 7; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+16 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);
+			}
+		}
+		//r3
+		{
+			int thisR = 3;
+			int[] thatR = {28,29,30,31,32,33};	//23-28
+			for(int i = 0; i < 6; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+23 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);
+			}
+		}
+			//r9
+		{
+			int thisR = 9;
+			int[] thatR = {14,15,16,17,18,19,20,10};	//29-36
+			for(int i = 0; i < 8; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+29 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);
+			}
+		}
+			//r10
+		{
+			int thisR = 10;
+			int[] thatR = {14,15,16,17,18,19,20};	//37-43
+			for(int i = 0; i < 7; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+37 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);
+			}
+		}
+			//r11
+		{
+			int thisR = 11;
+			int[] thatR = {21,22,23,24,25,26,27,12};	//44-51
+			for(int i = 0; i < 8; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+44 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);
+			}
+		}
+			//r12
+		{
+			int thisR = 12;
+			int[] thatR = {21,22,23,24,25,26,27};	//52-58
+			for(int i = 0; i < 7; i++)
+			{
+				Edge e = new Edge(topo.routers[thisR], topo.routers[thatR[i]], i+52 ,MyRandom.nextDouble());
+				topo.routers[thisR].interfaces.add(e);
+				topo.routers[thatR[i]].interfaces.add(e);
+			}
+		}
+			//others	8-4,13;5-6	59-61
+		{
+			Edge e = new Edge(topo.routers[8], topo.routers[4], 59 ,MyRandom.nextDouble());
+			topo.routers[8].interfaces.add(e);
+			topo.routers[4].interfaces.add(e);
+			
+			e = new Edge(topo.routers[8], topo.routers[13], 60 ,MyRandom.nextDouble());
+			topo.routers[8].interfaces.add(e);
+			topo.routers[13].interfaces.add(e);
+
+			e = new Edge(topo.routers[5], topo.routers[6], 59 ,MyRandom.nextDouble());
+			topo.routers[5].interfaces.add(e);
+			topo.routers[6].interfaces.add(e);
+		}
+		
+		
+		topo.issueContentOnServer();
+		//topo.serverOfContent= new int[100];
+		//for(int i = 0; i < 100; i++)
+		//	topo.serverOfContent[i] = 0;
+		
+		
+		topo.announce();
+		return topo;
+	}
+	
+	
 	//cacheSizes' size should be routerNum
 	public static Topology getLineTopology(int routerNum, int serverNum, int contentNum, int[] cacheSizes) {
 		Logger.log("Topology:" + "getLineTopology()", Logger.INFO);

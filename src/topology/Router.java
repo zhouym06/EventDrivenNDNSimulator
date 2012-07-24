@@ -71,11 +71,12 @@ public class Router {
 		Logger.log("Router" + routerID + ":handleAnnouce(" + aPacket.contentName + "): at router" + this.routerID + " from edge" + fromInterface.edgeID + "(index in array " + index + ")", Logger.ROUTER);
 		if(fib.announce(aPacket, index, time))
 		{
+			System.out.println(aPacket.contentName + " has changed @" + "Router" + routerID + " to " + 
+					interfaces.get(index).theOther(this).routerID);
 			for(Edge e:interfaces)
 			{
 				if(!e.equals(fromInterface))
 				{
-					
 					e.theOther(this).handle(new AnnoucePacket(aPacket), e, time + e.delay);
 				}
 			}

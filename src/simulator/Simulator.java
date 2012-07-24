@@ -16,8 +16,9 @@ public class Simulator {
 		//getDistributeByLevelInTree();
 		//getOptInTree();
 		//proveHillGADiff();
-		proveHillGADiff2();
+		//proveHillGADiff2();
 		//showReplaceDiff();
+		hillSZDiff();
 		//get1();
 		/*
 		Logger.clear();
@@ -40,6 +41,15 @@ public class Simulator {
 		*/
 	}
 	
+	private static void hillSZDiff() {
+		// TODO Auto-generated method stub
+		System.out.println("hillSZDiff");
+		int cacheSizes[] = new int[34];
+		for(int i = 0; i < 33; i ++)
+			cacheSizes[i] = 1000 / 34;
+		Topology topo = Topology.getSzCampusTopology1(1000, cacheSizes);
+	}
+
 	private static void showReplaceDiff() {
 		
 	}

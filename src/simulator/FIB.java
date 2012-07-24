@@ -71,6 +71,7 @@ public class FIB {								//Forward Information Base
 				return true;
 			}else if(entry.distance == aPacket.timeLived && entry.delay > arriveTime)
 			{
+				System.out.println(entry.delay + ";" + arriveTime);
 				entry.setNextInterface(fromInterface);
 				entry.setDistance(aPacket.timeLived);
 				entry.setDelay(arriveTime);
